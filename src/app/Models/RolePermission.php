@@ -14,9 +14,5 @@ class RolePermission extends Model
         'permission',
     ];
 
-    //ロールに紐づくユーザー
-    public function users()
-    {
-        return $this->hasMany(User::class, 'role', 'role');
-    }    
+
 }
