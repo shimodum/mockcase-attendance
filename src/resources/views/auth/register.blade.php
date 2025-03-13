@@ -38,7 +38,6 @@
         <div>
             <label>パスワード確認</label>
             <input type="password" name="password_confirmation">
-            {{-- 確認用はLaravelバリデーションで password_confirmation エラーは password に付随するため通常このままでOKです --}}
         </div>
 
         <div>
