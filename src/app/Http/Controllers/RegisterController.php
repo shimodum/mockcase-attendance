@@ -29,7 +29,7 @@ class RegisterController extends Controller
             'role'=> 'user', // 一般ユーザーとして登録
         ]);
 
-        // 登録後はログイン画面へリダイレクト
-        return redirect('/login')->with('success', '会員登録が完了しました。ログインしてください。');
+        // 登録後は勤怠登録画面（出勤前）へリダイレクト
+        return redirect('/attendance');
     }
 }
