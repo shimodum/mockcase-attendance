@@ -31,6 +31,5 @@
             <button type="submit">管理者ログインする</button>
         </div>
 
-        <p><a href="/register">会員登録はこちら</a></p>
     </form>
 @endsection
