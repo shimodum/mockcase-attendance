@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -9,9 +10,9 @@ class LoginController extends Controller
 {
     //ログイン画面表示
     //現在のURLが「admin/〜」であれば管理者用ビュー、それ以外は一般ユーザー用ビューを表示する
-    public function showForm()
+    public function showForm(Request $request)
     {
-        $isAdmin = request()->is('admin/*');
+        $isAdmin = $request->is('admin/*');
         return view($isAdmin ? 'admin.auth.login' : 'auth.login');
     }
 
@@ -25,7 +26,7 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            // 管理者と一般ユーザーで遷移先を分岐（ログイン成功時：管理者 → 管理者勤怠一覧、一般ユーザー → 出勤画面へリダイレクト）
+            // 管理者と一般ユーザーで遷移先を分岐（ログイン成功時：管理者 → 管理者勤怠一覧、一般ユーザー → 勤怠登録画面_出勤前へリダイレクト）
             $redirectPath = ($user->role === 'admin') ? '/admin/attendance/list' : '/attendance';
             return redirect()->intended($redirectPath);
         }
