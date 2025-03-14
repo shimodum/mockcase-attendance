@@ -1,0 +1,48 @@
+/* 管理者ログイン画面用CSS */
+
+form {
+    max-width: 420px;
+    margin: 40px auto;
+    text-align: left;
+}
+
+form div {
+    margin-bottom: 20px;
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+form input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+form button {
+    width: 100%;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    background-color: #333;
+    color: #fff;
+    margin-top: 60px;
+}
+
+form p {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* エラーメッセージ用 */
+.form-error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    text-align: left;
+}
