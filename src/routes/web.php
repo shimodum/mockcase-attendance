@@ -37,11 +37,17 @@ Route::post('/email/verification-notification', function () {
     // TODO: コントローラーに移行予定
 });
 
-// 勤怠登録・一覧・詳細（一般ユーザー）
+// 勤怠登録関連（一般ユーザー）
 Route::prefix('/attendance')->controller(AttendanceController::class)->group(function () {
-    Route::post('/', 'store');
-    Route::get('/list', 'index');
-    Route::get('/{id}', 'show');
+    Route::get('/', 'showBefore')->name('attendance.before'); // 出勤前画面
+    Route::post('/', 'store')->name('attendance.store');      // 勤怠登録（打刻処理）
+
+    Route::get('/working', 'showWorking')->name('attendance.working'); // 出勤後画面
+    Route::get('/break', 'showBreak')->name('attendance.break');       // 休憩中画面
+    Route::get('/after', 'showAfter')->name('attendance.after');       // 退勤後画面
+
+    Route::get('/list', 'index')->name('attendance.list');     // 勤怠一覧
+    Route::get('/{id}', 'show')->name('attendance.detail');    // 勤怠詳細
 });
 
 
