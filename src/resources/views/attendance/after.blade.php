@@ -1,6 +1,10 @@
 {{-- 勤怠登録画面（退勤後） --}}
 @extends('layouts.app')
 
+@section('nav')
+    @include('components.nav.after_nav')
+@endsection
+
 @section('content')
 @php
     $date = \Carbon\Carbon::now();

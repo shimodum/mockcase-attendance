@@ -1,6 +1,10 @@
 {{-- 勤怠登録画面（休憩中） --}}
 @extends('layouts.app')
 
+@section('nav')
+    @include('components.nav.user_nav')
+@endsection
+
 @section('content')
 @php
     $date = \Carbon\Carbon::now();

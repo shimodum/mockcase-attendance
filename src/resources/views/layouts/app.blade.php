@@ -16,6 +16,7 @@
     <header class="header">
         <div class="header-inner">
             <img src="{{ asset('images/logo.svg') }}" alt="COACHTECH" class="logo">
+            @yield('nav')
         </div>
     </header>
 
