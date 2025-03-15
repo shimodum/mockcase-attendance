@@ -12,7 +12,7 @@
     </div>
 
     <form action="/attendance/working" method="GET">
-        <button type="submit" class="btn-primary">休憩戻</button>
+        <button type="submit" class="btn-secondary">休憩戻</button>
     </form>
 </div>
 @endsection
