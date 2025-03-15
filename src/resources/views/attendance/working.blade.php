@@ -14,7 +14,7 @@
     </div>
     <div class="date-time">
         <p class="date">{{ $date->format('Y年n月j日') }}（{{ $dayOfWeek }}）</p>
-        <p class="time">{{ \Carbon\Carbon::now()->format('H:i') }}</p>
+        <p class="time">{{ $date->format('H:i') }}</p>
     </div>
 
     <form action="/attendance/after" method="GET" style="display: inline;">

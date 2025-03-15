@@ -14,7 +14,7 @@
     </div>
     <div class="date-time">
         <p class="date">{{ $date->format('Y年n月j日') }}（{{ $dayOfWeek }}）</p>
-        <p class="time">{{ \Carbon\Carbon::now()->format('H:i') }}</p>
+        <p class="time">{{ $date->format('H:i') }}</p>
     </div>
 
     <p style="font-size: 18px; font-weight: bold; letter-spacing: 2px; margin-top: 50px;">
