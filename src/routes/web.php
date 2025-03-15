@@ -39,7 +39,7 @@ Route::post('/email/verification-notification', function () {
 
 // 勤怠登録関連（一般ユーザー）
 Route::prefix('/attendance')->controller(AttendanceController::class)->group(function () {
-    Route::get('/', 'showBefore')->name('attendance.before'); // 出勤前画面
+    Route::get('/', 'showBefore')->name('attendance.before'); // 出勤前画面（デフォルト）
     Route::post('/', 'store')->name('attendance.store');      // 勤怠登録（打刻処理）
 
     Route::get('/working', 'showWorking')->name('attendance.working'); // 出勤後画面
