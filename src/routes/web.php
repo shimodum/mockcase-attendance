@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AttendanceController;
@@ -26,16 +30,21 @@ Route::controller(LoginController::class)->group(function () {
     Route::post('/login', 'authenticate');
 });
 
-// メール認証
-Route::get('/email/verify', function () {
-    return view('auth.verify');
-});
-Route::get('/email/verify/{id}/{hash}', function () {
-    // TODO: コントローラーに移行予定
-});
-Route::post('/email/verification-notification', function () {
-    // TODO: コントローラーに移行予定
-});
+// // メール認証ルート
+// Route::get('/email/verify', function () {
+//     return view('auth.verify'); // 認証誘導画面
+// })->middleware('auth')->name('verification.notice');
+
+// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill();
+//     return redirect('/attendance'); // 認証後の遷移先（出勤前画面）
+// })->middleware(['auth', 'signed'])->name('verification.verify');
+
+// Route::post('/email/verification-notification', function (Request $request) {
+//     $request->user()->sendEmailVerificationNotification();
+//     return back()->with('message', '認証メールを再送信しました。');
+// })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
 
 // 勤怠登録関連（一般ユーザー）
 Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceController::class)->group(function () {
