@@ -56,7 +56,7 @@ Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceControl
 
 /*
 |--------------------------------------------------------------------------
-| 修正申請関連（一般ユーザー・管理者共通）
+| 修正申請関連（一般ユーザー・管理者 共通）
 |--------------------------------------------------------------------------
 */
 Route::prefix('/stamp_correction_request')->controller(StampCorrectionRequestController::class)->group(function () {
@@ -64,6 +64,14 @@ Route::prefix('/stamp_correction_request')->controller(StampCorrectionRequestCon
     Route::get('/approve/{attendance_correction_request}', 'showApprove');
     Route::post('/approve/{attendance_correction_request}', 'approve');
 });
+
+/*
+|--------------------------------------------------------------------------
+| ログアウト処理（一般ユーザー・管理者 共通）
+|--------------------------------------------------------------------------
+*/
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
 
 /*
 |--------------------------------------------------------------------------

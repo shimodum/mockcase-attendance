@@ -37,4 +37,17 @@ class LoginController extends Controller
         ])->withInput();
     }
 
+
+    //ログアウト処理
+    public function logout(Request $request)
+    {
+        Auth::logout(); // ログアウト処理
+        $request->session()->invalidate(); // セッション無効化
+        $request->session()->regenerateToken(); // CSRFトークン再生成
+
+        // ロールに応じた遷移先にリダイレクト
+        $isAdmin = $request->is('admin/*');
+        return redirect($isAdmin ? '/admin/login' : '/login');
+    }
+
 }
