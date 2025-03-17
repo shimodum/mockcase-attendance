@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Attendance;
+use App\Models\BreakTime;
 
 class AttendanceController extends Controller
 {
@@ -33,7 +35,100 @@ class AttendanceController extends Controller
     // 出勤登録（出勤ボタン押下後の処理、打刻処理）（POST）
     public function store(Request $request)
     {
-        // TODO: 打刻処理の実装（出勤・退勤・休憩など）
+        $user = auth()->user(); // ログイン中のユーザーを取得
+        $today = now()->format('Y-m-d');
+
+        $existing = Attendance::where('user_id', $user->id)
+            ->where('date', $today) // 今日すでに出勤記録があるかチェック(= 同じ日にすでに出勤済みなら重複登録しない)
+            ->first();
+
+        if ($existing) {
+            return redirect()->route('attendance.working');
+        }
+
+        // 新しく出勤レコードを作成
+        Attendance::create([
+            'user_id' => $user->id,
+            'date' => $today,
+            'clock_in' => now(),
+            'status' => 'waiting_approval', // 初期ステータス
+        ]);
+
+        return redirect()->route('attendance.working');
+    }
+
+    // 休憩開始処理（POST）
+    // → 「休憩入」ボタンを押したときに呼び出される処理
+    public function startBreak(Request $request)
+    {
+        $user = auth()->user();
+        $today = now()->format('Y-m-d');
+
+        // 今日の勤怠レコードを取得
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('date', $today)
+            ->first();
+
+        // 勤怠が存在すれば休憩レコードを作成（開始時間のみ）
+        if ($attendance) {
+            BreakTime::create([
+                'attendance_id' => $attendance->id,
+                'break_start' => now(),
+            ]);
+        }
+
+        return redirect()->route('attendance.break');
+    }
+
+    // 休憩終了処理（POST）
+    // → 「休憩戻」ボタンを押したときに呼び出される処理
+    public function endBreak(Request $request)
+    {
+        $user = auth()->user();
+        $today = now()->format('Y-m-d');
+
+        // 今日の勤怠レコードを取得
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('date', $today)
+            ->first();
+
+        // 勤怠が存在すれば、最新の休憩レコードに終了時刻をセット
+        if ($attendance) {
+            $break = BreakTime::where('attendance_id', $attendance->id)
+                ->whereNull('break_end')
+                ->latest()
+                ->first();
+
+            // 未終了の休憩があれば、終了時間を記録
+            if ($break) {
+                $break->update([
+                    'break_end' => now(),
+                ]);
+            }
+        }
+
+        return redirect()->route('attendance.working');
+    }
+
+    // 退勤処理（POST）
+    public function clockOut(Request $request)
+    {
+        $user = auth()->user();
+        $today = now()->format('Y-m-d');
+
+        // 今日の勤怠レコードを取得
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('date', $today)
+            ->first();
+
+        // 退勤時間が未登録の場合のみ更新
+        if ($attendance && is_null($attendance->clock_out)) {
+            $attendance->update([
+                'clock_out' => now(),
+            ]);
+        }
+
+        return redirect()->route('attendance.after');
     }
 
     // 勤怠一覧表示

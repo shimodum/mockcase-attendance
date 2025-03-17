@@ -21,12 +21,16 @@
         <p class="time">{{ $date->format('H:i') }}</p>
     </div>
 
-    <form action="/attendance/after" method="GET" style="display: inline;">
-        <button type="submit" class="btn-primary">退勤</button>
-    </form>
+    <div class="button-group">
+        <form action="{{ route('attendance.clockout') }}" method="POST" style="display: inline-block;">
+            @csrf
+            <button type="submit" class="btn-primary">退勤</button>
+        </form>
 
-    <form action="/attendance/break" method="GET" style="display: inline;">
-        <button type="submit" class="btn-secondary">休憩入</button>
-    </form>
+        <form action="{{ route('attendance.break_start') }}" method="POST" style="display: inline-block; margin-left: 10px;">
+            @csrf
+            <button type="submit" class="btn-secondary">休憩入</button>
+        </form>
+    </div>
 </div>
 @endsection

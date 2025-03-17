@@ -22,7 +22,7 @@ Route::controller(RegisterController::class)->group(function () {
 
 // ログイン（一般ユーザー）
 Route::controller(LoginController::class)->group(function () {
-    Route::get('/login', 'showForm');
+    Route::get('/login', 'showForm')->name('login');
     Route::post('/login', 'authenticate');
 });
 
@@ -38,18 +38,21 @@ Route::post('/email/verification-notification', function () {
 });
 
 // 勤怠登録関連（一般ユーザー）
-Route::prefix('/attendance')->controller(AttendanceController::class)->group(function () {
-    Route::get('/', 'showBefore')->name('attendance.before'); // 出勤前画面（デフォルト）
-    Route::post('/', 'store')->name('attendance.store');      // 勤怠登録（打刻処理）
+Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceController::class)->group(function () {
+    Route::get('/', 'showBefore')->name('attendance.before');            // 出勤前画面（デフォルト）
+    Route::post('/', 'store')->name('attendance.store');                 // 勤怠登録処理（打刻）
 
-    Route::get('/working', 'showWorking')->name('attendance.working'); // 出勤後画面
-    Route::get('/break', 'showBreak')->name('attendance.break');       // 休憩中画面
-    Route::get('/after', 'showAfter')->name('attendance.after');       // 退勤後画面
+    Route::get('/working', 'showWorking')->name('attendance.working');   // 出勤後画面
+    Route::get('/break', 'showBreak')->name('attendance.break');         // 休憩中画面
+    Route::post('/break/start', 'startBreak')->name('attendance.break_start'); // 休憩開始処理
+    Route::post('/break/end', 'endBreak')->name('attendance.break_end');       // 休憩終了処理
 
-    Route::get('/list', 'index')->name('attendance.list');     // 勤怠一覧
-    Route::get('/{id}', 'show')->name('attendance.detail');    // 勤怠詳細
+    Route::post('/clockout', 'clockOut')->name('attendance.clockout');   //退勤処理
+    Route::get('/after', 'showAfter')->name('attendance.after');         // 退勤後画面
+
+    Route::get('/list', 'index')->name('attendance.list');               // 勤怠一覧
+    Route::get('/{id}', 'show')->name('attendance.detail');              // 勤怠詳細
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -61,7 +64,6 @@ Route::prefix('/stamp_correction_request')->controller(StampCorrectionRequestCon
     Route::get('/approve/{attendance_correction_request}', 'showApprove');
     Route::post('/approve/{attendance_correction_request}', 'approve');
 });
-
 
 /*
 |--------------------------------------------------------------------------

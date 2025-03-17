@@ -21,7 +21,9 @@
         <p class="time">{{ $date->format('H:i') }}</p>
     </div>
 
-    <form action="/attendance/working" method="GET">
+    {{-- 「休憩戻」ボタン（休憩終了処理へPOST） --}}
+    <form action="{{ route('attendance.break_end') }}" method="POST">
+        @csrf
         <button type="submit" class="btn-secondary">休憩戻</button>
     </form>
 </div>
