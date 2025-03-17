@@ -41,7 +41,7 @@ class LoginController extends Controller
     //ログアウト処理
     public function logout(Request $request)
     {
-        Auth::logout(); // ログアウト処理
+        Auth::logout(); // 現在ログイン中のユーザー情報を削除
         $request->session()->invalidate(); // セッション無効化
         $request->session()->regenerateToken(); // CSRFトークン再生成
 
