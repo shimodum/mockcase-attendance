@@ -6,12 +6,8 @@
     <div class="email-verify-wrapper">
         <p class="email-verify-message">
             登録していただいたメールアドレスに認証メールを送付しました。<br>
-            メール認証を完了してください。
+            メール内のリンクをクリックして認証を完了してください。
         </p>
-
-        <div>
-            <a href="#" class="email-verify-button">認証はこちらから</a>
-        </div>
 
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
