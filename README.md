@@ -44,6 +44,7 @@
 - **MySQL**: バージョン 8.0 以上
 - **Docker**: バージョン 27.2.0 以上
 - **Docker Compose**: バージョン 2.0 以上
+- **JavaScript**: バージョン  以上-
 - **Mailtrap**: APIバージョン 2.0 以上
   - メール送信を開発環境で確認するためのツール
 ---
@@ -101,7 +102,13 @@
     php artisan db:seed
    
 7.Mailtrapのセットアップと確認  
+  本アプリでは、メール認証についてMailtrapというツールを使用しています。  
 
+#### ■ Mailtrapの設定手順
+- [Mailtrap](https://mailtrap.io/) にアクセスし、会員登録をしてください。  
+- メールボックスのIntegrationsから 「laravel 7.x and 8.x」を選択し、  
+  .envファイルのMAIL_MAILERからMAIL_ENCRYPTIONまでの項目をコピー＆ペーストしてください。  
+  MAIL_FROM_ADDRESSは任意のメールアドレスを入力してください。
 
 
 8.JavaScript ファイルのロード確認  
