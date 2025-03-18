@@ -145,7 +145,7 @@
 - テストを実行する前に、 **必ず `.env.testing` を作成し、 `phpunit.xml` の設定を確認してください。**  
 - テスト実行時は **通常環境のデータベースが初期化されないよう、必ずテスト環境（`.env.testing`）を使用してください。**  
 
-## テストアカウント
+#### テストアカウント
 name: 一般ユーザ  
 email: general1@gmail.com  
 password: password  
