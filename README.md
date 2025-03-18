@@ -157,18 +157,14 @@
 - テスト実行時は **通常環境のデータベースが初期化されないよう、必ずテスト環境（`.env.testing`）を使用してください。**  
 
 ### テストアカウント  
-<small>
 name: 一般ユーザ  
 email: general1@gmail.com  
 password: password  
-</small>
--------------------------
-<small>
+
 name: 一般ユーザ  
 email: general2@gmail.com  
 password: password  
-</small>
--------------------------
+
 
 ### 1. **テスト環境の準備**
 #### **テスト環境の切り替え**
