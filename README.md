@@ -44,7 +44,7 @@
 - **MySQL**: バージョン 8.0 以上
 - **Docker**: バージョン 27.2.0 以上
 - **Docker Compose**: バージョン 2.0 以上
-- **JavaScript**: バージョン  以上-
+- **JavaScript**: バージョン  以上
 - **Mailtrap**: APIバージョン 2.0 以上
   - メール送信を開発環境で確認するためのツール
 ---
@@ -108,7 +108,11 @@
 - [Mailtrap](https://mailtrap.io/) にアクセスし、会員登録をしてください。  
 - メールボックスのIntegrationsから 「laravel 7.x and 8.x」を選択し、  
   .envファイルのMAIL_MAILERからMAIL_ENCRYPTIONまでの項目をコピー＆ペーストしてください。  
-  MAIL_FROM_ADDRESSは任意のメールアドレスを入力してください。
+  MAIL_FROM_ADDRESSは任意のメールアドレスを入力してください。  
+
+#### ■ 動作確認方法
+- 会員登録後、Mailtrap の受信ボックスに認証メールが届くことを確認します。
+- メール内の「Verify Email Address」をクリックし、出勤前画面に遷移すれば成功です。  
 
 
 8.JavaScript ファイルのロード確認  
@@ -152,14 +156,18 @@
 - テストを実行する前に、 **必ず `.env.testing` を作成し、 `phpunit.xml` の設定を確認してください。**  
 - テスト実行時は **通常環境のデータベースが初期化されないよう、必ずテスト環境（`.env.testing`）を使用してください。**  
 
-### テストアカウント
+### テストアカウント  
+<small>
 name: 一般ユーザ  
 email: general1@gmail.com  
 password: password  
+</small>
 -------------------------
+<small>
 name: 一般ユーザ  
 email: general2@gmail.com  
 password: password  
+</small>
 -------------------------
 
 ### 1. **テスト環境の準備**
