@@ -82,3 +82,48 @@ button.logout-link-button {
     font-weight: bold;
     line-height: 1;
 }
+
+
+/* ========================= */
+/* メール認証誘導画面 */
+/* ========================= */
+
+.email-verify-wrapper {
+    text-align: center;
+    padding: 60px 20px;
+    margin-top: 70px;
+}
+
+.email-verify-message {
+    font-size: 18px;
+    font-weight:bold ;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+}
+
+.email-verify-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    background-color: lightgray;
+    border: 1px solid #000;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #000;
+    margin-top: 5px;
+    margin-bottom: 40px;
+}
+
+.email-verify-resend-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+}

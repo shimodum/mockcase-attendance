@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -21,15 +22,21 @@ class RegisterController extends Controller
         // バリデーション済みデータを取得
         $validated = $request->validated();
 
-        // ユーザーを作成
-        User::create([
+        // ユーザー作成
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role'=> 'user', // 一般ユーザーとして登録
+            'role' => 'user',
         ]);
 
-        // 登録後は勤怠登録画面（出勤前）へリダイレクト
-        return redirect('/attendance');
+        // 作成したユーザーでログイン
+        Auth::login($user);
+
+        // メール認証通知を送信（Laravelが自動送信するので通常は省略可、明示してもOK）
+         $user->sendEmailVerificationNotification();
+
+        // メール認証誘導画面へリダイレクト
+        return redirect()->route('verification.notice');
     }
 }
