@@ -2,7 +2,7 @@
 @extends('layouts.app')
 
 @section('nav')
-    @include('components.nav.after_nav')
+    @include('components.nav.user_nav')
 @endsection
 
 @section('content')
