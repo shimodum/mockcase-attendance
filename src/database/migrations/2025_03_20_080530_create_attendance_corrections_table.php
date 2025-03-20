@@ -15,16 +15,14 @@ class CreateAttendanceCorrectionsTable extends Migration
     {
         Schema::create('attendance_corrections', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('attendance_id');
-            $table->time('requested_clock_in')->nullable();
-            $table->time('requested_clock_out')->nullable();
+            $table->foreignId('attendance_id')->constrained()->onDelete('cascade');
+            $table->time('requestd_clock_in')->nullable();
+            $table->time('requestd_clock_out')->nullable();
             $table->text('request_reason')->nullable();
             $table->timestamps();
-
-            // 外部キー制約
-            $table->foreign('attendance_id')->references('id')->on('attendances')->onDelete('cascade');
         });
     }
+
 
     /**
      * Reverse the migrations.

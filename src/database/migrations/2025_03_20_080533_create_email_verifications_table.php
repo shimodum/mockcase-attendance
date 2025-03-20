@@ -15,12 +15,9 @@ class CreateEmailVerificationsTable extends Migration
     {
         Schema::create('email_verifications', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('token')->unique();
-            $table->timestamps();
-
-            // 外部キー制約
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('token', 255);
+            $table->timestamp('created_at')->nullable();
         });
     }
 

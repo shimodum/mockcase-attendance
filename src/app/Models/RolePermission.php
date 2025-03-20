@@ -14,5 +14,4 @@ class RolePermission extends Model
         'permission',
     ];
 
-
 }

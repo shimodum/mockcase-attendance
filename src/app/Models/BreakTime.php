@@ -9,8 +9,7 @@ class BreakTime extends Model
 {
     use HasFactory;
 
-    // モデル名が BreakTime でも、テーブル名が breaks であることを明示（Laravelの規約と異なる場合）
-    protected $table = 'breaks';
+    protected $table = 'break_times';
 
     protected $fillable = [
         'attendance_id',
@@ -22,5 +21,11 @@ class BreakTime extends Model
     public function attendance()
     {
         return $this->belongsTo(Attendance::class);
+    }
+
+    //休憩修正申請とのリレーション（1:N）
+    public function breakTimeCorrections()
+    {
+        return $this->hasMany(BreakTimeCorrection::class);
     }
 }

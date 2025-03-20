@@ -58,7 +58,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     //勤怠修正申請とのリレーション（1:N）
-    public function corrections()
+    public function attendanceCorrections()
     {
         return $this->hasMany(AttendanceCorrection::class);
     }

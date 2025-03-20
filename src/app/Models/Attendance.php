@@ -25,19 +25,19 @@ class Attendance extends Model
     }
 
     //休憩情報とのリレーション（1:N）
-    public function breaks()
+    public function breakTimes()
     {
         return $this->hasMany(BreakTime::class);
     }
 
     //勤怠修正申請とのリレーション（1:N）
-    public function corrections()
+    public function attendanceCorrections()
     {
         return $this->hasMany(AttendanceCorrection::class);
     }
 
     //勤怠承認とのリレーション（1:N）
-    public function approvals()
+    public function attendanceApprovals()
     {
         return $this->hasMany(AttendanceApproval::class);
     }

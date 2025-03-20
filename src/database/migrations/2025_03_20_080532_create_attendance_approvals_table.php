@@ -15,17 +15,14 @@ class CreateAttendanceApprovalsTable extends Migration
     {
         Schema::create('attendance_approvals', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('attendance_id');
-            $table->unsignedBigInteger('admin_user_id');
-            $table->boolean('is_approved')->default(false); // false: 承認待ち, true: 承認済み
+            $table->foreignId('attendance_id')->constrained()->onDelete('cascade');
+            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
+            $table->boolean('is_approved')->default(false);
             $table->text('remarks')->nullable();
             $table->timestamps();
-
-            // 外部キー制約
-            $table->foreign('attendance_id')->references('id')->on('attendances')->onDelete('cascade');
-            $table->foreign('admin_user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
+
 
     /**
      * Reverse the migrations.
