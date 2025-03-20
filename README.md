@@ -101,7 +101,7 @@
     php artisan db:seed
    
 7.Mailtrapのセットアップと確認  
-  本アプリでは、メール認証についてMailtrapというツールを使用しています。  
+  本アプリケーションでは、メール認証についてMailtrapというツールを使用しています。  
 
 #### ■ Mailtrapの設定手順
 - [Mailtrap](https://mailtrap.io/) にアクセスし、会員登録をしてください。  
