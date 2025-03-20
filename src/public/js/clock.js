@@ -1,3 +1,4 @@
+// このファイルは「現在の日付と時刻」をリアルタイムに表示するためのJavaScript
 
 function updateClock() {
     const now = new Date();
@@ -10,9 +11,11 @@ function updateClock() {
     const seconds = String(now.getSeconds()).padStart(2, '0');
     const formattedTime = `${hours}:${minutes}`;
 
+    // HTML内の「#current-date」と「#current-time」の要素を取得
     const dateElem = document.getElementById('current-date');
     const timeElem = document.getElementById('current-time');
 
+    // 該当の要素がある場合に表示内容を更新する
     if (dateElem && timeElem) {
         dateElem.textContent = formattedDate;
         timeElem.textContent = formattedTime;
