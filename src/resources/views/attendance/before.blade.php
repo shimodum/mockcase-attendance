@@ -26,8 +26,8 @@
         <span class="status">勤務外</span>
     </div>
     <div class="date-time">
-        <p class="date">{{ $date->format('Y年n月j日') }}（{{ $dayOfWeek }}）</p>
-        <p class="time">{{ $date->format('H:i') }}</p>
+        <p class="date" id="current-date">{{ $date->format('Y年n月j日') }}（{{ $dayOfWeek }}）</p>
+        <p class="time" id="current-time">{{ $date->format('H:i') }}</p>
     </div>
 
     <form action="/attendance" method="POST">

@@ -23,5 +23,7 @@
     <main class="main">
         @yield('content')
     </main>
+
+    <script src="{{ asset('js/clock.js') }}"></script>
 </body>
 </html>

@@ -17,8 +17,8 @@
         <span class="status">退勤済</span>
     </div>
     <div class="date-time">
-        <p class="date">{{ $date->format('Y年n月j日') }}（{{ $dayOfWeek }}）</p>
-        <p class="time">{{ $date->format('H:i') }}</p>
+        <p class="date" id="current-date">{{ $date->format('Y年n月j日') }}（{{ $dayOfWeek }}）</p>
+        <p class="time" id="current-time">{{ $date->format('H:i') }}</p>
     </div>
 
     <p style="font-size: 18px; font-weight: bold; letter-spacing: 2px; margin-top: 50px;">
