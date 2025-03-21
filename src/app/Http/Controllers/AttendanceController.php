@@ -164,6 +164,8 @@ class AttendanceController extends Controller
     // 勤怠詳細表示
     public function show($id)
     {
-        return view('attendance.detail', ['id' => $id]);
+        $attendance = Attendance::with('breakTimes')->findOrFail($id); //休憩情報も一緒に取得
+
+        return view('attendance.detail', compact('attendance'));
     }
 }

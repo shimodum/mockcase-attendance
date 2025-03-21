@@ -82,3 +82,17 @@
     font-weight: bold;
     font-size: 1.1rem;
 }
+
+
+/* ------------------------- */
+/* 勤怠詳細画面  */
+/* ------------------------- */
+
+.attendance-detail-table th {
+    width: 120px;
+}
+
+.action-btn-area {
+    text-align: center;
+    margin-top: 30px;
+}
