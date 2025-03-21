@@ -1,5 +1,6 @@
-/* 勤怠登録 画面用CSS */
-
+/* ------------------------------------------ */
+/* 勤怠登録画面（出勤前・出勤後・休憩中・退勤後）*/
+/* -------------------------------------------*/
 .attendance-container {
     text-align: center;
     margin-top: 80px;
@@ -50,4 +51,34 @@
     border-radius: 8px;
     cursor: pointer;
     margin-left: 10px;
+}
+
+
+/* ------------------------- */
+/* 勤怠一覧画面：月切り替え */
+/* ------------------------- */
+.month-switch {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.month-btn {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background-color: #f4f4f4;
+    color: #000;
+    margin: 0 10px;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.month-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.current-month {
+    font-weight: bold;
+    font-size: 1.1rem;
 }

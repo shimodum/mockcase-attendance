@@ -132,10 +132,34 @@ class AttendanceController extends Controller
     }
 
     // 勤怠一覧表示
-    public function index()
+    public function index(Request $request)
     {
-        return view('attendance.list');
+        $user = auth()->user();
+
+        // パラメータがある場合はその月、なければ今月
+        $currentMonth = $request->input('month')
+                        ? \Carbon\Carbon::parse($request->input('month') . '-01')
+                        : now()->startOfMonth();
+
+        // 当月1日～末日までの範囲
+        $startDate = $currentMonth->copy()->startOfMonth();
+        $endDate = $currentMonth->copy()->endOfMonth();
+
+        // 勤怠データ取得（その月のみ）
+        $attendances = Attendance::where('user_id', $user->id)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date', 'asc')
+            ->get();
+
+        // 前月・翌月の値もビューに渡す
+        $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m');
+        $displayMonth = $currentMonth->format('Y年m月');
+
+        return view('attendance.list', compact('attendances', 'prevMonth', 'nextMonth', 'displayMonth'));
     }
+
+
 
     // 勤怠詳細表示
     public function show($id)
