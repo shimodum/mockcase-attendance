@@ -138,7 +138,7 @@ class AttendanceController extends Controller
 
         // パラメータがある場合はその月、なければ今月
         $currentMonth = $request->input('month')
-                        ? \Carbon\Carbon::parse($request->input('month') . '-01')
+                        ? \Carbon\Carbon::createFromFormat('Y-m', $request->input('month'))->startOfMonth()
                         : now()->startOfMonth();
 
         // 当月1日～末日までの範囲
