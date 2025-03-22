@@ -25,7 +25,7 @@ class Attendance extends Model
     }
 
     //休憩情報とのリレーション（1:N）
-    public function breaks()
+    public function breakTimes()
     {
         return $this->hasMany(BreakTime::class);
     }

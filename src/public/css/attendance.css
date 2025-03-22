@@ -88,11 +88,37 @@
 /* 勤怠詳細画面  */
 /* ------------------------- */
 
-.attendance-detail-table th {
-    width: 120px;
+.attendance-table {
+    width: 60%;
+    margin: 40px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.action-btn-area {
+.attendance-table th,
+.attendance-table td {
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.attendance-table th {
+    background-color: #f5f5f5;
+    width: 30%;
+}
+
+.page-title {
     text-align: center;
+    font-size: 24px;
+    margin-top: 40px;
+}
+
+.text-danger {
+    text-align: center;
+    color: #e60033;
+    font-weight: bold;
     margin-top: 30px;
 }

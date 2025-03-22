@@ -35,7 +35,7 @@
             @foreach ($attendances as $attendance)
                 @php
                     $totalBreakMinutes = 0;
-                    foreach ($attendance->breaks as $break) {
+                    foreach ($attendance->breakTimes as $break) {
                         if ($break->break_start && $break->break_end) {
                             $totalBreakMinutes += \Carbon\Carbon::parse($break->break_start)->diffInMinutes($break->break_end);
                         }
