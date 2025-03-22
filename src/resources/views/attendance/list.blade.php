@@ -32,8 +32,14 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+            @endphp
             @foreach ($attendances as $attendance)
                 @php
+                    $dateObj = \Carbon\Carbon::parse($attendance->date);
+                    $dayOfWeek = $weekdays[$dateObj->dayOfWeek];
+
                     $totalBreakMinutes = 0;
                     foreach ($attendance->breakTimes as $break) {
                         if ($break->break_start && $break->break_end) {
@@ -54,7 +60,7 @@
                 @endphp
 
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($attendance->date)->format('Y/m/d（D）') }}</td>
+                    <td>{{ $dateObj->format('Y/m/d') }}（{{ $dayOfWeek }}）</td>
                     <td>{{ optional($attendance->clock_in)->format('H:i') ?? '-' }}</td>
                     <td>{{ optional($attendance->clock_out)->format('H:i') ?? '-' }}</td>
                     <td>{{ $totalBreakMinutes ? sprintf('%d:%02d', $breakHour, $breakMin) : '-' }}</td>

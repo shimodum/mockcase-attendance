@@ -121,9 +121,9 @@ Mailtrapによるメール認証完了後、下記アカウントでログイン
 
 | 区分           | 名前     | メールアドレス           | パスワード   |
 |----------------|----------|---------------------------|--------------|
-| 一般ユーザー1  | user1    | general1@gmail.com        | password1    |
-| 一般ユーザー2  | user2    | general2@gmail.com        | password2    |
-| 管理者ユーザー | admin1   | admin1@gmail.com          | adminpass    |
+| 一般ユーザー1  | user1    | general1@example.com        | password1    |
+| 一般ユーザー2  | user2    | general2@example.com        | password2    |
+| 管理者ユーザー | admin1   | admin1@example.com          | adminpass    |
 
 ※ Mailtrapによるメール認証が完了していない場合はログインできません。  
 
@@ -135,13 +135,7 @@ Mailtrapによるメール認証完了後、下記アカウントでログイン
 - テスト実行時は **通常環境のデータベースが初期化されないよう、必ずテスト環境（`.env.testing`）を使用してください。**  
 
 ### テストアカウント  
-name: 一般ユーザ  
-email: general1@gmail.com  
-password: password  
 
-name: 一般ユーザ  
-email: general2@gmail.com  
-password: password  
 
 
 ### 1. **テスト環境の準備**

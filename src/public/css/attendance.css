@@ -102,7 +102,12 @@
 .attendance-table td {
     padding: 16px;
     border-bottom: 1px solid #ddd;
-    text-align: left;
+    text-align: center;
+}
+
+.attendance-table th:last-child,
+.attendance-table td:last-child {
+    width: 80px;
 }
 
 .attendance-table th {
