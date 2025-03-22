@@ -1,4 +1,3 @@
-{{-- 勤怠一覧画面（一般ユーザー） --}}
 @extends('layouts.app')
 
 @section('css')
@@ -11,19 +10,19 @@
 
 @section('content')
 <div class="attendance-list-container">
-    <h2 class="title">勤怠一覧</h2>
+    <h2 class="page-title"><span class="pipe">｜</span> <span class="bold-title">勤怠一覧</span></h2>
 
-    {{-- 月切り替えボタン --}}
+    {{-- 月切り替え --}}
     <div class="month-switch">
-        <a href="{{ route('attendance.list', ['month' => $prevMonth]) }}" class="month-btn">← 前月</a>
-        <span class="current-month">{{ $displayMonth }}</span>
-        <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="month-btn">翌月 →</a>
+        <a href="{{ route('attendance.list', ['month' => $prevMonth]) }}" class="month-link">← 前月</a>
+        <span class="month-current">{{ $displayMonth }}</span>
+        <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="month-link">翌月 →</a>
     </div>
 
     <table class="attendance-table">
         <thead>
             <tr>
-                <th>日付</th>
+                <th class="left-align">日付</th>
                 <th>出勤</th>
                 <th>退勤</th>
                 <th>休憩</th>
@@ -32,40 +31,35 @@
             </tr>
         </thead>
         <tbody>
-            @php
-                $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-            @endphp
             @foreach ($attendances as $attendance)
                 @php
-                    $dateObj = \Carbon\Carbon::parse($attendance->date);
-                    $dayOfWeek = $weekdays[$dateObj->dayOfWeek];
-
                     $totalBreakMinutes = 0;
-                    foreach ($attendance->breakTimes as $break) {
+                    foreach ($attendance->breakTimes ?? [] as $break) {
                         if ($break->break_start && $break->break_end) {
                             $totalBreakMinutes += \Carbon\Carbon::parse($break->break_start)->diffInMinutes($break->break_end);
                         }
                     }
 
-                    if ($attendance->clock_in && $attendance->clock_out) {
-                        $workMinutes = \Carbon\Carbon::parse($attendance->clock_in)->diffInMinutes($attendance->clock_out) - $totalBreakMinutes;
-                    } else {
-                        $workMinutes = null;
-                    }
+                    $workMinutes = ($attendance->clock_in && $attendance->clock_out)
+                        ? \Carbon\Carbon::parse($attendance->clock_in)->diffInMinutes($attendance->clock_out) - $totalBreakMinutes
+                        : null;
 
                     $breakHour = floor($totalBreakMinutes / 60);
                     $breakMin = $totalBreakMinutes % 60;
                     $workHour = floor($workMinutes / 60);
                     $workMin = $workMinutes % 60;
+
+                    $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+                    $dayOfWeek = $weekdays[\Carbon\Carbon::parse($attendance->date)->dayOfWeek];
                 @endphp
 
                 <tr>
-                    <td>{{ $dateObj->format('Y/m/d') }}（{{ $dayOfWeek }}）</td>
+                    <td class="left-align">{{ \Carbon\Carbon::parse($attendance->date)->format("Y/m/d") }}（{{ $dayOfWeek }}）</td>
                     <td>{{ optional($attendance->clock_in)->format('H:i') ?? '-' }}</td>
                     <td>{{ optional($attendance->clock_out)->format('H:i') ?? '-' }}</td>
                     <td>{{ $totalBreakMinutes ? sprintf('%d:%02d', $breakHour, $breakMin) : '-' }}</td>
                     <td>{{ $workMinutes !== null ? sprintf('%d:%02d', $workHour, $workMin) : '-' }}</td>
-                    <td><a href="{{ route('attendance.detail', ['id' => $attendance->id]) }}">詳細</a></td>
+                    <td><a href="{{ route('attendance.detail', ['id' => $attendance->id]) }}" class="detail-link">詳細</a></td>
                 </tr>
             @endforeach
         </tbody>

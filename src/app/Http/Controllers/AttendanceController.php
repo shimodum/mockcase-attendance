@@ -154,7 +154,7 @@ class AttendanceController extends Controller
         // 前月・翌月の値もビューに渡す
         $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
         $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m');
-        $displayMonth = $currentMonth->format('Y年m月');
+        $displayMonth = $currentMonth->format('Y/m');
 
         return view('attendance.list', compact('attendances', 'prevMonth', 'nextMonth', 'displayMonth'));
     }
