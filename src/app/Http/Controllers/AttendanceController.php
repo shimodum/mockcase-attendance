@@ -152,9 +152,10 @@ class AttendanceController extends Controller
             ->get();
 
         // 前月・翌月の値もビューに渡す
-        $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
-        $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m');
-        $displayMonth = $currentMonth->format('Y/m');
+        $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m'); // ← routing用
+        $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m'); // ← routing用
+        $displayMonth = $currentMonth->format('Y/m'); // ← 表示用
+
 
         return view('attendance.list', compact('attendances', 'prevMonth', 'nextMonth', 'displayMonth'));
     }

@@ -4,69 +4,58 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Attendance;
-use App\Models\AttendanceApproval;
-use App\Models\BreakTime;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AttendanceSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        // 一般ユーザー1の勤怠
-        Attendance::create([
-            'user_id' => 1,
-            'date' => '2023-06-01',
-            'clock_in' => '2023-06-01 09:00:00',
-            'clock_out' => '2023-06-01 18:00:00',
-            'total_hours' => 8.00,
-            'status' => 'waiting_approval',
-            'note' => '電車遅延のため',
-        ]);
+        // 対象ユーザー
+        $users = User::whereIn('email', [
+            'general1@example.com',
+            'general2@example.com',
+        ])->get();
 
-        // 一般ユーザー2の勤怠
-        Attendance::create([
-            'user_id' => 2,
-            'date' => '2023-06-01',
-            'clock_in' => '2023-06-01 08:30:00',
-            'clock_out' => '2023-06-01 17:30:00',
-            'total_hours' => 8.00,
-            'status' => 'approved',
-            'note' => null,
-        ]);
+        // 勤怠データ作成対象期間：2025年2月〜5月
+        $startMonth = Carbon::create(2025, 2, 1);
+        $endMonth = Carbon::create(2025, 5, 1);
 
-        // 管理者による承認コメントも追加（attendance_id=2に対して）
-        AttendanceApproval::create([
-            'attendance_id' => 2,
-            'admin_id' => 3,
-            'is_approved' => true,
-            'admin_comment' => '問題なし',
-        ]);
+        foreach ($users as $user) {
+            $month = $startMonth->copy();
 
-        // 追加：月ごとのダミーデータ（User1）
-        $userId = 1;
-        $months = ['2025-02', '2025-03', '2025-04', '2025-05'];
+            while ($month <= $endMonth) {
+                $daysInMonth = $month->daysInMonth;
 
-        foreach ($months as $month) {
-            $startDate = Carbon::parse($month . '-01');
-            $endDate = $startDate->copy()->endOfMonth();
+                for ($day = 1; $day <= $daysInMonth; $day++) {
+                    $date = $month->copy()->day($day);
 
-            for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
-                if ($date->isWeekday()) {
-                    $attendance = Attendance::create([
-                        'user_id' => $userId,
-                        'date' => $date->format('Y-m-d'),
-                        'clock_in' => $date->copy()->setTime(9, 0),
-                        'clock_out' => $date->copy()->setTime(18, 0),
-                        'status' => 'waiting_approval',
-                        'note' => 'ダミーデータ',
-                    ]);
+                    // 土日除外
+                    if ($date->isWeekend()) continue;
 
-                    BreakTime::create([
-                        'attendance_id' => $attendance->id,
-                        'break_start' => $date->copy()->setTime(12, 0),
-                        'break_end' => $date->copy()->setTime(13, 0),
+                    // 出勤・退勤時間をユーザー別に少し変化させる
+                    $clockIn = $date->copy()->setTime(9, 0);
+                    $clockOut = $date->copy()->setTime(18, 0);
+
+                    // ユーザーごとのズレ設定（例として分単位）
+                    if ($user->email === 'general1@example.com') {
+                        $clockIn->addMinutes(rand(-10, 10)); // ±10分
+                        $clockOut->addMinutes(rand(-10, 10));
+                    } elseif ($user->email === 'general2@example.com') {
+                        $clockIn->addMinutes(rand(-20, 5));  // やや遅れがち
+                        $clockOut->addMinutes(rand(0, 15));  // やや早退しがち
+                    }
+
+                    Attendance::create([
+                        'user_id'   => $user->id,
+                        'date'      => $date->format('Y-m-d'),
+                        'clock_in'  => $clockIn,
+                        'clock_out' => $clockOut,
+                        'status'    => 'waiting_approval',
                     ]);
                 }
+
+                $month->addMonth();
             }
         }
     }

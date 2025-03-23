@@ -10,28 +10,31 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // 一般ユーザー1 → メール認証未完了（Mailtrapで体験させる用）
         User::create([
-            'name' => '一般ユーザー1',
+            'name' => 'user1',
             'email' => 'general1@example.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('password1'),
             'role' => 'user',
-            'email_verified_at' => now(), //メール認証済みにしておく
+            'email_verified_at' => null, // 認証未完了
         ]);
 
+        // 一般ユーザー2 → メール認証完了済み
         User::create([
-            'name' => '一般ユーザー2',
+            'name' => 'user2',
             'email' => 'general2@example.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('password2'),
             'role' => 'user',
-            'email_verified_at' => now(),
+            'email_verified_at' => now(), // 認証済み
         ]);
 
+        // 管理者ユーザー → メール認証不要のため、完了扱いで問題なし
         User::create([
-            'name' => '管理者ユーザー',
-            'email' => 'admin@example.com',
+            'name' => 'admin1',
+            'email' => 'admin1@example.com',
             'password' => Hash::make('adminpass'),
             'role' => 'admin',
-            'email_verified_at' => now(),
+            'email_verified_at' => now(), // 認証済み
         ]);
     }
 }
