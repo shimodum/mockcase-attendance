@@ -30,9 +30,6 @@ class AttendanceSeeder extends Seeder
                 for ($day = 1; $day <= $daysInMonth; $day++) {
                     $date = $month->copy()->day($day);
 
-                    // 土日除外
-                    if ($date->isWeekend()) continue;
-
                     // 出勤・退勤時間をユーザー別に少し変化させる
                     $clockIn = $date->copy()->setTime(9, 0);
                     $clockOut = $date->copy()->setTime(18, 0);
