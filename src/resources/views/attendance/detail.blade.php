@@ -20,33 +20,42 @@
         </tr>
         <tr>
             <th>日付</th>
-            <td>{{ \Carbon\Carbon::parse($attendance->date)->format('Y年n月j日') }}</td>
+            <td>{{ \Carbon\Carbon::parse($attendance->date)->format('Y年n月j日（D）') }}</td>
         </tr>
         <tr>
             <th>出勤・退勤</th>
             <td>
-                {{ optional($attendance->clock_in)->format('H:i') ?? '-' }} ～ {{ optional($attendance->clock_out)->format('H:i') ?? '-' }}
+                {{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}
+                 ～ 
+                {{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}
             </td>
         </tr>
         <tr>
             <th>休憩</th>
             <td>
-                @php
-                    $firstBreak = $attendance->breakTimes->first();
-                    $breakStart = optional($firstBreak->break_start)->format('H:i') ?? '-';
-                    $breakEnd = optional($firstBreak->break_end)->format('H:i') ?? '-';
-                @endphp
-                {{ $breakStart }} ～ {{ $breakEnd }}
+                @if ($attendance->breakTimes && $attendance->breakTimes->count())
+                    <ul>
+                        @foreach ($attendance->breakTimes as $break)
+                            <li>
+                                {{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '-' }}
+                                ～
+                                {{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '-' }}
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    休憩記録なし
+                @endif
             </td>
         </tr>
         <tr>
             <th>備考</th>
-            <td>電車遅延のため</td> {{-- ※現時点ではダミー固定でもOK --}}
+            <td>電車遅延のため</td> {{-- 今はダミーでOK --}}
         </tr>
     </table>
 
     <div class="action-btn-area">
-        <a href="#" class="btn-primary">修正</a> {{-- ※まだリンク先は未定でOK --}}
+        <a href="#" class="btn-primary">修正</a> {{-- ※リンク先未定ならダミー --}}
     </div>
 </div>
 @endsection
