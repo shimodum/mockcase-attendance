@@ -62,10 +62,14 @@
                     <td class="left-align">
                         {{ \Carbon\Carbon::parse($attendance->date)->format('Y/m/d') }}（{{ $dayOfWeek }}）
                     </td>
-                    <td>{{ optional($attendance->clock_in)->format('H:i') ?? '-' }}</td>
-                    <td>{{ optional($attendance->clock_out)->format('H:i') ?? '-' }}</td>
-                    <td>{{ $totalBreakMinutes ? sprintf('%d:%02d', $breakHour, $breakMin) : '-' }}</td>
-                    <td>{{ $workMinutes !== null ? sprintf('%d:%02d', $workHour, $workMin) : '-' }}</td>
+                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}
+                    </td>
+                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}
+                    </td>
+                    <td>{{ $totalBreakMinutes ? sprintf('%d:%02d', $breakHour, $breakMin) : '-' }}
+                    </td>
+                    <td>{{ $workMinutes !== null ? sprintf('%d:%02d', $workHour, $workMin) : '-' }}
+                    </td>
                     <td>
                         <a href="{{ route('attendance.detail', ['id' => $attendance->id]) }}" class="detail-link">詳細</a>
                     </td>
