@@ -16,6 +16,7 @@ class Attendance extends Model
         'clock_out',
         'total_hours',
         'status',
+        'note',
     ];
 
     //ユーザーとのリレーション（N:1）

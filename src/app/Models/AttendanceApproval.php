@@ -13,7 +13,7 @@ class AttendanceApproval extends Model
         'attendance_id',
         'admin_id',
         'is_approved',
-        'remarks',
+        'admin_comment',
     ];
 
     //勤怠情報とのリレーション（N:1）

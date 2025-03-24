@@ -18,7 +18,7 @@ class CreateBreakTimeCorrectionsTable extends Migration
             $table->foreignId('break_time_id')->constrained('break_times')->onDelete('cascade');
             $table->time('requested_break_start')->nullable();
             $table->time('requested_break_end')->nullable();
-            $table->text('request_reason')->nullable();
+            $table->text('request_reason', 255);
             $table->timestamps();
         });
     }

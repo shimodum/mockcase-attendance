@@ -101,6 +101,7 @@ class AttendanceSeeder extends Seeder
                         'clock_in'  => $clockIn,
                         'clock_out' => $clockOut,
                         'status'    => 'waiting_approval',
+                        'note' => '電車遅延のため',
                     ]);
                 }
 

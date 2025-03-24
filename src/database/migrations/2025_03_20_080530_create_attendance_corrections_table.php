@@ -18,7 +18,7 @@ class CreateAttendanceCorrectionsTable extends Migration
             $table->foreignId('attendance_id')->constrained()->onDelete('cascade');
             $table->time('requestd_clock_in')->nullable();
             $table->time('requestd_clock_out')->nullable();
-            $table->text('request_reason')->nullable();
+            $table->text('request_reason', 255);
             $table->timestamps();
         });
     }
