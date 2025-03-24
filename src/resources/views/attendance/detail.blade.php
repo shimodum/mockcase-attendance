@@ -11,51 +11,51 @@
 
 @section('content')
 <div class="attendance-detail-container">
-    <h2 class="title">勤怠詳細</h2>
+    <h2 class="title">| 勤怠詳細</h2>
 
-    <table class="attendance-detail-table">
-        <tr>
-            <th>名前</th>
-            <td>{{ $attendance->user->name ?? '-' }}</td>
-        </tr>
-        <tr>
-            <th>日付</th>
-            <td>{{ \Carbon\Carbon::parse($attendance->date)->format('Y年n月j日（D）') }}</td>
-        </tr>
-        <tr>
-            <th>出勤・退勤</th>
-            <td>
-                {{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}
-                 ～ 
-                {{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}
-            </td>
-        </tr>
-        <tr>
-            <th>休憩</th>
-            <td>
-                @if ($attendance->breakTimes && $attendance->breakTimes->count())
-                    <ul>
-                        @foreach ($attendance->breakTimes as $break)
-                            <li>
-                                {{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '-' }}
-                                ～
-                                {{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '-' }}
-                            </li>
-                        @endforeach
-                    </ul>
-                @else
-                    休憩記録なし
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <th>備考</th>
-            <td>電車遅延のため</td> {{-- 今はダミーでOK --}}
-        </tr>
-    </table>
+    {{-- 修正申請フォーム --}}
+    <form method="POST" action="{{ route('attendance.correction_request', $attendance->id) }}">
+        @csrf
 
-    <div class="action-btn-area">
-        <a href="#" class="btn-primary">修正</a> {{-- ※リンク先未定ならダミー --}}
-    </div>
+        <table class="attendance-detail-table">
+            <tr>
+                <th>名前</th>
+                <td>{{ $attendance->user->name ?? '-' }}</td>
+            </tr>
+            <tr>
+                <th>日付</th>
+                <td>{{ \Carbon\Carbon::parse($attendance->date)->format('Y年n月j日') }}</td>
+            </tr>
+            <tr>
+                <th>出勤・退勤</th>
+                <td>
+                    <input type="time" name="clock_in" value="{{ old('clock_in', $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '') }}">
+                    ～
+                    <input type="time" name="clock_out" value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}">
+                </td>
+            </tr>
+            <tr>
+                <th>休憩</th>
+                <td>
+                    @php
+                        $firstBreak = $attendance->breakTimes->first();
+                    @endphp
+                    <input type="time" name="break_start" value="{{ old('break_start', $firstBreak && $firstBreak->break_start ? \Carbon\Carbon::parse($firstBreak->break_start)->format('H:i') : '') }}">
+                    ～
+                    <input type="time" name="break_end" value="{{ old('break_end', $firstBreak && $firstBreak->break_end ? \Carbon\Carbon::parse($firstBreak->break_end)->format('H:i') : '') }}">
+                </td>
+            </tr>
+            <tr>
+                <th>備考</th>
+                <td>
+                    <textarea name="note" rows="2" cols="40">{{ old('note', $attendance->note) }}</textarea>
+                </td>
+            </tr>
+        </table>
+
+        <div class="action-btn-area">
+            <button type="submit" class="btn-primary">修正</button>
+        </div>
+    </form>
 </div>
 @endsection

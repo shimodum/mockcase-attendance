@@ -56,12 +56,15 @@ Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceControl
     Route::post('/break/start', 'startBreak')->name('attendance.break_start'); // 休憩開始処理
     Route::post('/break/end', 'endBreak')->name('attendance.break_end');       // 休憩終了処理
 
-    Route::post('/clockout', 'clockOut')->name('attendance.clockout');   //退勤処理
+    Route::post('/clockout', 'clockOut')->name('attendance.clockout');   // 退勤処理
     Route::get('/after', 'showAfter')->name('attendance.after');         // 退勤後画面
 
     Route::get('/list', 'index')->name('attendance.list');               // 勤怠一覧
     Route::get('/{id}', 'show')->name('attendance.detail');              // 勤怠詳細
+
+    Route::post('/{id}/correction_request', 'submitCorrectionRequest')->name('attendance.correction_request'); // 勤怠修正申請を送信する処理
 });
+
 
 /*
 |--------------------------------------------------------------------------

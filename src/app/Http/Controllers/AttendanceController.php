@@ -32,7 +32,7 @@ class AttendanceController extends Controller
         return view('attendance.after');
     }
 
-    // 出勤登録（出勤ボタン押下後の処理、打刻処理）（POST）
+    // 出勤登録処理（打刻）（POST）
     public function store(Request $request)
     {
         $user = auth()->user(); // ログイン中のユーザーを取得
@@ -169,4 +169,18 @@ class AttendanceController extends Controller
 
         return view('attendance.detail', compact('attendance'));
     }
+
+    // 勤怠修正申請の送信処理
+    public function requestCorrection(Request $request, $id)
+    {
+        $attendance = Attendance::findOrFail($id);
+
+        // note（備考）を更新・ステータス変更
+        $attendance->note = $request->input('note');
+        $attendance->status = 'correction_requested';
+        $attendance->save();
+
+        return redirect()->route('attendance.detail', $attendance->id)
+            ->with('message', '修正申請を送信しました。');
+    }    
 }
