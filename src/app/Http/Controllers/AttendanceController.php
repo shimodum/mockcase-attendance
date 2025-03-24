@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\BreakTime;
+use App\Http\Requests\AttendanceCorrectionRequest;
 
 class AttendanceController extends Controller
 {
@@ -171,13 +172,13 @@ class AttendanceController extends Controller
     }
 
     // 勤怠修正申請の送信処理
-    public function requestCorrection(Request $request, $id)
+    public function requestCorrection(AttendanceCorrectionRequest $request, $id)
     {
         $attendance = Attendance::findOrFail($id);
 
         // note（備考）を更新・ステータス変更
         $attendance->note = $request->input('note');
-        $attendance->status = 'correction_requested';
+        $attendance->status = 'waiting_approval';
         $attendance->save();
 
         return redirect()->route('attendance.detail', $attendance->id)

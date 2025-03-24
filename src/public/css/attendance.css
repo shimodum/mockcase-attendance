@@ -168,3 +168,11 @@
     font-weight: bold;
     margin-top: 30px;
 }
+
+
+/* エラーメッセージ */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 4px;
+}

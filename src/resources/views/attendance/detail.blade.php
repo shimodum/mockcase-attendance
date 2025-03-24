@@ -30,8 +30,16 @@
                 <th>出勤・退勤</th>
                 <td>
                     <input type="time" name="clock_in" value="{{ old('clock_in', $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '') }}">
-                    ～
+                    ～ 
                     <input type="time" name="clock_out" value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}">
+                    
+                    {{-- エラーメッセージ表示 --}}
+                    @error('clock_in')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                    @error('clock_out')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </td>
             </tr>
             <tr>
@@ -41,14 +49,27 @@
                         $firstBreak = $attendance->breakTimes->first();
                     @endphp
                     <input type="time" name="break_start" value="{{ old('break_start', $firstBreak && $firstBreak->break_start ? \Carbon\Carbon::parse($firstBreak->break_start)->format('H:i') : '') }}">
-                    ～
+                    ～ 
                     <input type="time" name="break_end" value="{{ old('break_end', $firstBreak && $firstBreak->break_end ? \Carbon\Carbon::parse($firstBreak->break_end)->format('H:i') : '') }}">
+
+                    {{-- エラーメッセージ表示 --}}
+                    @error('break_start')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                    @error('break_end')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </td>
             </tr>
             <tr>
                 <th>備考</th>
                 <td>
                     <textarea name="note" rows="2" cols="40">{{ old('note', $attendance->note) }}</textarea>
+
+                    {{-- エラーメッセージ表示 --}}
+                    @error('note')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </td>
             </tr>
         </table>

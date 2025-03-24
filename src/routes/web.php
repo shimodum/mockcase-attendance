@@ -62,7 +62,7 @@ Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceControl
     Route::get('/list', 'index')->name('attendance.list');               // 勤怠一覧
     Route::get('/{id}', 'show')->name('attendance.detail');              // 勤怠詳細
 
-    Route::post('/{id}/correction_request', 'submitCorrectionRequest')->name('attendance.correction_request'); // 勤怠修正申請を送信する処理
+    Route::post('/{id}/correction_request', 'requestCorrection')->name('attendance.correction_request'); // 勤怠修正申請を送信する処理
 });
 
 
@@ -71,10 +71,10 @@ Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceControl
 | 修正申請関連（一般ユーザー・管理者 共通）
 |--------------------------------------------------------------------------
 */
-Route::prefix('/stamp_correction_request')->controller(StampCorrectionRequestController::class)->group(function () {
-    Route::get('/list', 'index');
-    Route::get('/approve/{attendance_correction_request}', 'showApprove');
-    Route::post('/approve/{attendance_correction_request}', 'approve');
+Route::middleware(['auth'])->prefix('/stamp_correction_request')->controller(StampCorrectionRequestController::class)->group(function () {
+    Route::get('/list', 'index')->name('stamp_correction_request.list');
+    Route::get('/approve/{attendance_correction_request}', 'showApprove')->name('stamp_correction_request.showApprove');
+    Route::post('/approve/{attendance_correction_request}', 'approve')->name('stamp_correction_request.approve');
 });
 
 /*
