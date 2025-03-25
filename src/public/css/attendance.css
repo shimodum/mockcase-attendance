@@ -64,23 +64,6 @@
     color: #000;
 }
 
-.page-title {
-    display: flex;
-    align-items: center;
-    font-size: 24px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.page-title .pipe {
-    font-size: 24px;
-    font-weight: bold;
-    margin-right: 10px;
-    color: #000;
-}
-
 .bold-title {
     font-weight: bold;
     font-size: 24px;
@@ -160,6 +143,14 @@
     text-align: center;
     font-size: 24px;
     margin-top: 40px;
+    margin-bottom: 30px;
+}
+
+.page-title .pipe {
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 10px;
+    color: #000;
 }
 
 .text-danger {
@@ -169,10 +160,67 @@
     margin-top: 30px;
 }
 
-
-/* エラーメッセージ */
+/* エラーメッセージ（共通） */
 .error-message {
     color: red;
-    font-size: 0.9em;
-    margin-top: 4px;
+    font-size: 0.85em;
+    margin-top: 6px;
+}
+
+
+/* ------------------------------------------ */
+/* 勤怠詳細画面のレイアウト（申請フォーム）  */
+/* ------------------------------------------ */
+.attendance-detail-container {
+    width: 60%;
+    margin: 40px auto;
+    font-family: sans-serif;
+    color: #000;
+}
+
+.attendance-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.attendance-detail-table th,
+.attendance-detail-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+}
+
+.attendance-detail-table th {
+    width: 120px;
+    background-color: #f7f7f7;
+    color: gray;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.attendance-detail-table input[type="time"],
+.attendance-detail-table textarea {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin: 4px 0;
+    width: 120px;
+}
+
+.attendance-detail-table textarea {
+    width: 100%;
+    resize: none;
+}
+
+/* ボタンエリア */
+.action-btn-area {
+    text-align: center;
+    margin-top: 30px;
 }

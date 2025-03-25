@@ -22,5 +22,5 @@ function updateClock() {
     }
 }
 
-updateClock();
-setInterval(updateClock, 1000);
+updateClock(); //最初に1回だけ現在時刻を表示（または更新）
+setInterval(updateClock, 1000); // その後、1秒ごとに自動で時計を更新し続ける

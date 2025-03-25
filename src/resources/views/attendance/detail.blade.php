@@ -11,7 +11,7 @@
 
 @section('content')
 <div class="attendance-detail-container">
-    <h2 class="title">| 勤怠詳細</h2>
+    <h2 class="page-title"><span class="pipe">｜</span>勤怠詳細</h2>
 
     {{-- 修正申請フォーム --}}
     <form method="POST" action="{{ route('attendance.correction_request', $attendance->id) }}">
@@ -30,10 +30,9 @@
                 <th>出勤・退勤</th>
                 <td>
                     <input type="time" name="clock_in" value="{{ old('clock_in', $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '') }}">
-                    ～ 
+                    〜 
                     <input type="time" name="clock_out" value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}">
                     
-                    {{-- エラーメッセージ表示 --}}
                     @error('clock_in')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -49,10 +48,9 @@
                         $firstBreak = $attendance->breakTimes->first();
                     @endphp
                     <input type="time" name="break_start" value="{{ old('break_start', $firstBreak && $firstBreak->break_start ? \Carbon\Carbon::parse($firstBreak->break_start)->format('H:i') : '') }}">
-                    ～ 
+                    〜 
                     <input type="time" name="break_end" value="{{ old('break_end', $firstBreak && $firstBreak->break_end ? \Carbon\Carbon::parse($firstBreak->break_end)->format('H:i') : '') }}">
 
-                    {{-- エラーメッセージ表示 --}}
                     @error('break_start')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -66,7 +64,6 @@
                 <td>
                     <textarea name="note" rows="2" cols="40">{{ old('note', $attendance->note) }}</textarea>
 
-                    {{-- エラーメッセージ表示 --}}
                     @error('note')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
