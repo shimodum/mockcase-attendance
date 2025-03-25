@@ -172,10 +172,20 @@
 /* 勤怠詳細画面のレイアウト（申請フォーム）  */
 /* ------------------------------------------ */
 .attendance-detail-container {
-    width: 60%;
+    width: 50%;
     margin: 40px auto;
     font-family: sans-serif;
     color: #000;
+}
+
+.attendance-detail-container .page-title {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 40px;
+    margin-bottom: 24px;
+    justify-content: flex-start;
 }
 
 .attendance-detail-table {
@@ -208,6 +218,7 @@
 .attendance-detail-table textarea {
     padding: 8px;
     font-size: 14px;
+    font-weight: bold;
     border: 1px solid #ccc;
     border-radius: 6px;
     margin: 4px 0;
@@ -219,8 +230,7 @@
     resize: none;
 }
 
-/* ボタンエリア */
 .action-btn-area {
-    text-align: center;
+    text-align: right;
     margin-top: 30px;
 }
