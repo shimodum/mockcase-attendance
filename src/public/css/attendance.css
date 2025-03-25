@@ -227,7 +227,7 @@
 .attendance-detail-table input[type="time"],
 .attendance-detail-table textarea {
     padding: 8px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     letter-spacing: 1px;
     border: 1px solid #ccc;
