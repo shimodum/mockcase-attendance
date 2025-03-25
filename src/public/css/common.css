@@ -58,16 +58,17 @@ a {
 .nav-menu ul {
     list-style: none;
     display: flex;
-    gap: 20px;
+    gap: 30px;
     margin: 0;
     padding: 0;
 }
 
 .nav-menu ul li a {
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
     text-decoration: none;
     font-weight: bold;
+    letter-spacing: 1px;
 }
 
 button.logout-link-button {
@@ -75,7 +76,7 @@ button.logout-link-button {
     border: none;
     padding: 0;
     margin: 0;
-    font-size: 14px;
+    font-size: 15px;
     font-family: inherit;
     color: #fff;
     cursor: pointer;
