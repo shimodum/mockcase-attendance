@@ -136,6 +136,7 @@
     text-decoration: underline;
 }
 
+
 /* ------------------------- */
 /* 勤怠詳細画面 共通調整 */
 /* ------------------------- */
@@ -166,7 +167,6 @@
     font-size: 0.85em;
     margin-top: 6px;
 }
-
 
 /* ------------------------------------------ */
 /* 勤怠詳細画面のレイアウト（申請フォーム）  */
@@ -233,4 +233,83 @@
 .action-btn-area {
     text-align: right;
     margin-top: 30px;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 767px) { /* スマホ向け */
+    .attendance-detail-container {
+        width: 95%;
+        margin: 20px auto;
+    }
+
+    .attendance-detail-container .page-title {
+        font-size: 18px;
+        margin-left: 16px;
+        margin-bottom: 16px;
+    }
+
+    .attendance-detail-table th,
+    .attendance-detail-table td {
+        font-size: 12px;
+        padding: 10px 12px;
+        display: block;
+        width: 100%;
+    }
+
+    .attendance-detail-table th {
+        background-color: transparent;
+        color: #555;
+        padding-bottom: 4px;
+    }
+
+    .attendance-detail-table td {
+        padding-top: 0;
+    }
+
+    .attendance-detail-table input[type="time"],
+    .attendance-detail-table textarea {
+        width: 100%;
+        font-size: 13px;
+    }
+
+    .attendance-detail-table textarea {
+        height: 80px;
+    }
+
+    .action-btn-area {
+        text-align: center;
+    }
+
+    .btn-primary {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+@media screen and (max-width: 850px) { /* タブレット向け */
+    .attendance-detail-container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .attendance-detail-table th,
+    .attendance-detail-table td {
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+
+    .attendance-detail-table input[type="time"],
+    .attendance-detail-table textarea {
+        width: 100%;
+        font-size: 13px;
+    }
+
+    .action-btn-area {
+        text-align: center;
+    }
+
+    .btn-primary {
+        width: 100%;
+        max-width: 200px;
+    }
 }
