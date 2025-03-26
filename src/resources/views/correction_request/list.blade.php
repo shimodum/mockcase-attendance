@@ -1,7 +1,9 @@
 {{-- 申請一覧画面（一般ユーザー） --}}
 @extends('layouts.app')
 
-@section('title', '申請一覧')
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/correction_request.css') }}">
+@endsection
 
 @section('nav')
     <div class="nav-menu">
