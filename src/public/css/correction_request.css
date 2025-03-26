@@ -51,6 +51,7 @@ td {
     color: gray;
     padding: 15px;
     text-align: center;
+    font-weight: bold;
     letter-spacing: 2px;
     border-bottom: 1px solid #eee;
 }
@@ -58,4 +59,10 @@ td {
 thead {
     background-color: #f9f9f9;
     font-weight: bold;
+}
+
+.detail-link {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
 }

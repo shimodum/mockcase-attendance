@@ -19,7 +19,7 @@ class AttendanceCorrectionSeeder extends Seeder
                 'attendance_id' => $attendance->id,
                 'requested_clock_in' => Carbon::parse($attendance->clock_in)->addMinutes(5),
                 'requested_clock_out' => Carbon::parse($attendance->clock_out)->subMinutes(5),
-                'request_reason' => '電車遅延のため',
+                'request_reason' => '遅延のため',
             ]);
         }
 
