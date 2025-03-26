@@ -16,8 +16,8 @@ class CreateAttendanceCorrectionsTable extends Migration
         Schema::create('attendance_corrections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attendance_id')->constrained()->onDelete('cascade');
-            $table->time('requestd_clock_in')->nullable();
-            $table->time('requestd_clock_out')->nullable();
+            $table->time('requested_clock_in')->nullable();
+            $table->time('requested_clock_out')->nullable();
             $table->text('request_reason', 255);
             $table->timestamps();
         });
