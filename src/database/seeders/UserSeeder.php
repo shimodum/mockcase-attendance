@@ -10,16 +10,16 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // 一般ユーザー1 → メール認証未完了（Mailtrapで体験させる用）
+        // 一般ユーザー1 → メール認証済み（ログインして機能確認可）
         User::create([
             'name' => 'user1',
             'email' => 'general1@example.com',
             'password' => Hash::make('password1'),
             'role' => 'user',
-            'email_verified_at' => null, // 認証未完了
+            'email_verified_at' => now(), // 認証済み
         ]);
 
-        // 一般ユーザー2 → メール認証完了済み
+        // 一般ユーザー2 → メール認証済み
         User::create([
             'name' => 'user2',
             'email' => 'general2@example.com',
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
             'email' => 'admin1@example.com',
             'password' => Hash::make('adminpass'),
             'role' => 'admin',
-            'email_verified_at' => now(), // 認証済み
+            'email_verified_at' => now(),
         ]);
     }
 }
