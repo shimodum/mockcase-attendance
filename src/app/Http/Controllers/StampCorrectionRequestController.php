@@ -24,4 +24,15 @@ class StampCorrectionRequestController extends Controller
 
         return view('correction_request.list', compact('corrections', 'status'));
     }
+
+    // 勤怠修正申請の詳細を表示
+    public function show(AttendanceCorrection $attendance_correction_request)
+    {
+        // 勤怠とユーザー情報を読み込む（リレーション）
+        $attendance_correction_request->load('attendance.user');
+
+        return view('correction_request.request_detail', [
+            'correction' => $attendance_correction_request,
+        ]);
+    }
 }

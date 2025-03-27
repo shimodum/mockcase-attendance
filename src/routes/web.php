@@ -75,6 +75,7 @@ Route::middleware(['auth'])->prefix('/stamp_correction_request')->controller(Sta
     Route::get('/list', 'index')->name('stamp_correction_request.list');
     Route::get('/approve/{attendance_correction_request}', 'showApprove')->name('stamp_correction_request.showApprove');
     Route::post('/approve/{attendance_correction_request}', 'approve')->name('stamp_correction_request.approve');
+    Route::get('/{attendance_correction_request}', 'show')->name('stamp_correction_request.show'); // 申請詳細画面（一般ユーザー用）
 });
 
 /*
@@ -106,3 +107,10 @@ Route::prefix('/admin/attendance')->controller(AdminAttendanceController::class)
 
 // 管理者 スタッフ一覧
 Route::get('/admin/staff/list', [AdminStaffController::class, 'index']);
+
+
+// 管理者　修正申請画面
+Route::middleware(['auth', 'can:isAdmin'])->prefix('/stamp_correction_request')->controller(AdminCorrectionController::class)->group(function () {
+    Route::get('/approve/{attendance_correction_request}', 'showApprove')->name('stamp_correction_request.showApprove');
+    Route::post('/approve/{attendance_correction_request}', 'approve')->name('stamp_correction_request.approve');
+});
