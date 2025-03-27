@@ -1,0 +1,83 @@
+/* ------------------------------- */
+/* 勤怠一覧画面（管理者用）       */
+/* ------------------------------- */
+
+.attendance-list-container {
+    width: 80%;
+    margin: 40px auto;
+    font-family: sans-serif;
+    color: #000;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.page-title .pipe {
+    margin-right: 10px;
+    color: #000;
+    font-weight: bold;
+}
+
+.date-selector-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.btn-date {
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    color: #333;
+}
+
+.date-input {
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: transparent;
+    text-align: center;
+    width: 140px;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+}
+
+.attendance-table th {
+    background-color: #f7f7f7;
+    font-weight: bold;
+    color: #666;
+}
+
+.detail-link {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.detail-link:hover {
+    text-decoration: underline;
+}
