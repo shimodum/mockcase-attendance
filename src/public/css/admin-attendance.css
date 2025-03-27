@@ -36,16 +36,18 @@
     border: none;
     font-weight: bold;
     font-size: 16px;
+    letter-spacing: 1px;
     cursor: pointer;
-    color: #333;
+    color: gray;
 }
 
 .date-input {
     border: none;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
     background-color: transparent;
     text-align: center;
+    letter-spacing: 1px;
     width: 140px;
 }
 
