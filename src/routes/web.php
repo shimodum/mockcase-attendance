@@ -9,8 +9,8 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\StampCorrectionRequestController;
-use App\Http\Controllers\Admin\AdminAttendanceController;
-use App\Http\Controllers\Admin\AdminStaffController;
+use App\Http\Controllers\AdminAttendanceController;
+use App\Http\Controllers\AdminStaffController;
 
 /*
 |--------------------------------------------------------------------------

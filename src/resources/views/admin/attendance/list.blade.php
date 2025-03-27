@@ -37,14 +37,15 @@
                         <td>{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}</td>
                         <td>{{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}</td>
                         <td>
-                            {{ $attendance->breaks->sum(function ($break) {
-                                return \Carbon\Carbon::parse($break->end_time)->diffInMinutes($break->start_time);
+                            {{ optional($attendance->breakTimes)->sum(function ($break) {
+                                return \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start);
                             }) / 60 }}:00
                         </td>
                         <td>
-                            {{ \Carbon\Carbon::parse($attendance->clock_in)->diffInMinutes($attendance->clock_out) / 60 - $attendance->breaks->sum(function ($break) {
-                                return \Carbon\Carbon::parse($break->end_time)->diffInMinutes($break->start_time);
-                            }) / 60 }}:00
+                            {{ \Carbon\Carbon::parse($attendance->clock_in)->diffInMinutes($attendance->clock_out) / 60
+                                - optional($attendance->breakTimes)->sum(function ($break) {
+                                    return \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start);
+                                }) / 60 }}:00
                         </td>
                         <td><a href="{{ url('/admin/attendance/' . $attendance->id) }}" class="detail-link">詳細</a></td>
                     </tr>
