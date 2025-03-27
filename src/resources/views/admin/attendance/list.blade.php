@@ -10,13 +10,22 @@
 @endsection
 
 @section('content')
+    @php
+        // 分 → H:i 表記に変換する共通関数
+        function formatHM($minutes) {
+            return floor($minutes / 60) . ':' . sprintf('%02d', $minutes % 60);
+        }
+    @endphp
+
     <div class="attendance-list-container">
-        <h2 class="page-title"><span class="pipe">｜</span>{{ \Carbon\Carbon::parse($date)->format('Y年n月j日') }}の勤怠</h2>
+        <h2 class="page-title">
+            <span class="pipe">｜</span>{{ \Carbon\Carbon::parse($date)->format('Y年n月j日') }}の勤怠
+        </h2>
 
         <form method="GET" action="{{ url('/admin/attendance/list') }}" class="date-selector-form">
-            <button type="submit" name="date" value="{{ \Carbon\Carbon::parse($date)->subDay()->toDateString() }}" class="btn-date">&lt; 前日</button>
-            <input type="text" name="date" value="{{ $date }}" class="date-input" readonly>
-            <button type="submit" name="date" value="{{ \Carbon\Carbon::parse($date)->addDay()->toDateString() }}" class="btn-date">翌日 &gt;</button>
+            <a href="{{ url('/admin/attendance/list?date=' . \Carbon\Carbon::parse($date)->subDay()->toDateString()) }}" class="btn-date">← 前日</a>
+            <input type="text" class="date-input" value="{{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}" readonly>
+            <a href="{{ url('/admin/attendance/list?date=' . \Carbon\Carbon::parse($date)->addDay()->toDateString()) }}" class="btn-date">翌日 →</a>
         </form>
 
         <table class="attendance-table">
@@ -32,21 +41,23 @@
             </thead>
             <tbody>
                 @foreach ($attendances as $attendance)
+                    @php
+                        $clockIn = \Carbon\Carbon::parse($attendance->clock_in);
+                        $clockOut = \Carbon\Carbon::parse($attendance->clock_out);
+                        $workMinutes = $clockIn->diffInMinutes($clockOut);
+
+                        $breakMinutes = $attendance->breakTimes->sum(function ($break) {
+                            return \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start);
+                        });
+
+                        $totalMinutes = $workMinutes - $breakMinutes;
+                    @endphp
                     <tr>
                         <td>{{ $attendance->user->name }}</td>
-                        <td>{{ \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') }}</td>
-                        <td>
-                            {{ optional($attendance->breakTimes)->sum(function ($break) {
-                                return \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start);
-                            }) / 60 }}:00
-                        </td>
-                        <td>
-                            {{ \Carbon\Carbon::parse($attendance->clock_in)->diffInMinutes($attendance->clock_out) / 60
-                                - optional($attendance->breakTimes)->sum(function ($break) {
-                                    return \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start);
-                                }) / 60 }}:00
-                        </td>
+                        <td>{{ $clockIn->format('H:i') }}</td>
+                        <td>{{ $clockOut->format('H:i') }}</td>
+                        <td>{{ formatHM($breakMinutes) }}</td>
+                        <td>{{ formatHM($totalMinutes) }}</td>
                         <td><a href="{{ url('/admin/attendance/' . $attendance->id) }}" class="detail-link">詳細</a></td>
                     </tr>
                 @endforeach
