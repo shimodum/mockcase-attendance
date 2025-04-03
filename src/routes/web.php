@@ -101,7 +101,7 @@ Route::controller(LoginController::class)->group(function () {
 
 // 管理者 勤怠関連
 Route::prefix('/admin/attendance')->controller(AdminAttendanceController::class)->group(function () {
-    Route::get('/list', 'index');
+    Route::get('/list', 'index')->name('admin.attendance.list');
     Route::get('/{id}', 'show');
     Route::put('/{attendance}', 'update')->name('admin.attendance.update');
     Route::get('/staff/{id}', 'staffIndex');
