@@ -12,7 +12,7 @@ class AttendanceCorrectionRequest extends FormRequest
     }
 
     /**
-     * バリデーションルール定義
+     * 通常のバリデーションルール定義
      */
     public function rules()
     {
@@ -33,10 +33,10 @@ class AttendanceCorrectionRequest extends FormRequest
         return [
             'clock_in.required' => '出勤時刻を入力してください',
             'clock_in.date_format' => '出勤時刻の形式が正しくありません（例：09:00）',
-            
+
             'clock_out.required' => '退勤時刻を入力してください',
             'clock_out.date_format' => '退勤時刻の形式が正しくありません（例：18:00）',
-            'clock_out.after' => '退勤時刻は出勤時刻より後の時刻を入力してください',
+            'clock_out.after' => '出勤時間もしくは退勤時間が不適切な値です',
 
             'break_start.date_format' => '休憩開始時刻の形式が正しくありません（例：12:00）',
             'break_end.date_format' => '休憩終了時刻の形式が正しくありません（例：13:00）',
@@ -45,5 +45,28 @@ class AttendanceCorrectionRequest extends FormRequest
             'note.required' => '備考を記入してください',
             'note.max' => '備考は255文字以内で入力してください',
         ];
+    }
+
+    /**
+     * カスタムバリデーション（勤務時間外の休憩を防ぐ）
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $clockIn = $this->input('clock_in');
+            $clockOut = $this->input('clock_out');
+            $breakStart = $this->input('break_start');
+            $breakEnd = $this->input('break_end');
+
+            // 全ての時間が揃っている場合のみチェック
+            if ($clockIn && $clockOut) {
+                if ($breakStart && $breakStart < $clockIn) {
+                    $validator->errors()->add('break_start', '休憩時間が勤務時間外です');
+                }
+                if ($breakEnd && $breakEnd > $clockOut) {
+                    $validator->errors()->add('break_end', '休憩時間が勤務時間外です');
+                }
+            }
+        });
     }
 }
