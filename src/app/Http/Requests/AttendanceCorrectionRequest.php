@@ -32,14 +32,14 @@ class AttendanceCorrectionRequest extends FormRequest
     {
         return [
             'clock_in.required' => '出勤時刻を入力してください',
-            'clock_in.date_format' => '出勤時刻の形式が正しくありません（例：09:00）',
+            'clock_in.date_format' => '出勤時刻は「H:i」形式で入力してください',
 
             'clock_out.required' => '退勤時刻を入力してください',
-            'clock_out.date_format' => '退勤時刻の形式が正しくありません（例：18:00）',
+            'clock_out.date_format' => '退勤時刻は「H:i」形式で入力してください',
             'clock_out.after' => '出勤時間もしくは退勤時間が不適切な値です',
 
-            'break_start.date_format' => '休憩開始時刻の形式が正しくありません（例：12:00）',
-            'break_end.date_format' => '休憩終了時刻の形式が正しくありません（例：13:00）',
+            'breaks.*.break_start.date_format' => '休憩開始時刻は「H:i」形式で入力してください',
+            'breaks.*.break_end.date_format' => '休憩終了時刻は「H:i」形式で入力してください',
             'break_end.after' => '休憩終了時刻は休憩開始時刻より後の時刻を入力してください',
 
             'note.required' => '備考を記入してください',

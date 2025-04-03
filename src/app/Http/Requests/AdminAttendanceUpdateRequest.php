@@ -27,16 +27,20 @@ class AdminAttendanceUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'date.required' => '日付は必須です',
+            'date.required' => '日付を入力してください',
             'date.date' => '日付の形式が正しくありません',
-            'clock_in.required' => '出勤時刻は必須です',
-            'clock_in.date_format' => '出勤時刻は「HH:MM」形式で入力してください',
-            'clock_out.required' => '退勤時刻は必須です',
-            'clock_out.date_format' => '退勤時刻は「HH:MM」形式で入力してください',
+
+            'clock_in.required' => '出勤時刻を入力してください',
+            'clock_in.date_format' => '出勤時刻は「H:i」形式で入力してください',
+
+            'clock_out.required' => '退勤時刻を入力してください',
+            'clock_out.date_format' => '退勤時刻は「H:i」形式で入力してください',
             'clock_out.after' => '出勤時間もしくは退勤時間が不適切な値です',
-            'breaks.*.break_start.date_format' => '休憩開始時刻は「HH:MM」形式で入力してください',
-            'breaks.*.break_end.date_format' => '休憩終了時刻は「HH:MM」形式で入力してください',
-            'breaks.*.break_end.after' => '休憩終了は開始より後の時刻を指定してください',
+
+            'breaks.*.break_start.date_format' => '休憩開始時刻は「H:i」形式で入力してください',
+            'breaks.*.break_end.date_format' => '休憩終了時刻は「H:i」形式で入力してください',
+            'break_end.after' => '休憩終了時刻は休憩開始時刻より後の時刻を入力してください',
+
             'note.required' => '備考を記入してください',
             'note.max' => '備考は255文字以内で入力してください',
         ];
