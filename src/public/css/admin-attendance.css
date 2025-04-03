@@ -83,3 +83,161 @@
 .detail-link:hover {
     text-decoration: underline;
 }
+
+/* ------------------------------- */
+/* 勤怠詳細画面（管理者用）       */
+/* ------------------------------- */
+.attendance-detail-container {
+    width: 50%;
+    margin: 40px auto;
+    font-family: sans-serif;
+    color: #000;
+}
+
+.attendance-detail-container .page-title {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-left: 40px;
+    margin-bottom: 60px;
+    justify-content: flex-start;
+}
+
+.attendance-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.attendance-detail-table th,
+.attendance-detail-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.attendance-detail-table th {
+    width: 120px;
+    background-color: #f7f7f7;
+    color: gray;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.attendance-detail-table input[type="time"],
+.attendance-detail-table input[type="date"],
+.attendance-detail-table textarea {
+    padding: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin: 4px 0;
+    width: 120px;
+}
+
+.attendance-detail-table textarea {
+    width: 100%;
+    resize: none;
+}
+
+.action-btn-area {
+    text-align: right;
+    margin-top: 80px;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.85em;
+    margin-top: 6px;
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 767px) {
+    .attendance-detail-container {
+        width: 95%;
+        margin: 20px auto;
+    }
+
+    .attendance-detail-container .page-title {
+        font-size: 18px;
+        margin-left: 16px;
+        margin-bottom: 16px;
+    }
+
+    .attendance-detail-table th,
+    .attendance-detail-table td {
+        font-size: 12px;
+        padding: 10px 12px;
+        display: block;
+        width: 100%;
+    }
+
+    .attendance-detail-table th {
+        background-color: transparent;
+        color: #555;
+        padding-bottom: 4px;
+    }
+
+    .attendance-detail-table td {
+        padding-top: 0;
+    }
+
+    .attendance-detail-table input[type="time"],
+    .attendance-detail-table input[type="date"],
+    .attendance-detail-table textarea {
+        width: 100%;
+        font-size: 13px;
+    }
+
+    .attendance-detail-table textarea {
+        height: 80px;
+    }
+
+    .action-btn-area {
+        text-align: center;
+    }
+
+    .btn-primary {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .attendance-detail-container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .attendance-detail-table th,
+    .attendance-detail-table td {
+        font-size: 13px;
+        padding: 12px 16px;
+    }
+
+    .attendance-detail-table input[type="time"],
+    .attendance-detail-table input[type="date"],
+    .attendance-detail-table textarea {
+        width: 100%;
+        font-size: 13px;
+    }
+
+    .action-btn-area {
+        text-align: center;
+    }
+
+    .btn-primary {
+        width: 100%;
+        max-width: 200px;
+    }
+}
