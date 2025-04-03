@@ -34,7 +34,7 @@ class AttendanceCorrectionRequest extends FormRequest
             'clock_in.required' => '出勤時刻を入力してください',
             'clock_in.date_format' => '出勤時刻の形式が正しくありません（例：09:00）',
             
-            'clock_out.required' => '退勤時刻を入力してください。',
+            'clock_out.required' => '退勤時刻を入力してください',
             'clock_out.date_format' => '退勤時刻の形式が正しくありません（例：18:00）',
             'clock_out.after' => '退勤時刻は出勤時刻より後の時刻を入力してください',
 
