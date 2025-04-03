@@ -24,7 +24,10 @@
             </tr>
             <tr>
                 <th>日付</th>
-                <td>{{ \Carbon\Carbon::parse($attendance->date)->format('Y年n月j日') }}</td>
+                <td>
+                    <input type="date" name="date" value="{{ old('date', \Carbon\Carbon::parse($attendance->date)->format('Y-m-d')) }}">
+                    @error('date')<div class="error-message">{{ $message }}</div>@enderror
+                </td>
             </tr>
             <tr>
                 <th>出勤・退勤</th>
