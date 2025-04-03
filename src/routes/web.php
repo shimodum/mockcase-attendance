@@ -103,6 +103,7 @@ Route::controller(LoginController::class)->group(function () {
 Route::prefix('/admin/attendance')->controller(AdminAttendanceController::class)->group(function () {
     Route::get('/list', 'index');
     Route::get('/{id}', 'show');
+    Route::put('/{attendance}', 'update')->name('admin.attendance.update');
     Route::get('/staff/{id}', 'staffIndex');
 });
 
