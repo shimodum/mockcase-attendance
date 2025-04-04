@@ -121,7 +121,7 @@ class AdminAttendanceController extends Controller
         ));
     }
 
-    // CSV出力処理（UTF-8 BOM付きでExcel文字化け防止対応済）
+    // CSV出力処理
     public function exportCsv(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -147,13 +147,13 @@ class AdminAttendanceController extends Controller
             fputs($stream, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
             // CSVの1行目（見出し）を書き込む
-            fputcsv($stream, ['日付', '出勤', '退勤', '休憩時間', '勤務時間']);
+            fputcsv($stream, ['日付', '出勤', '退勤', '休憩', '合計']);
 
             // 勤怠データを1行ずつCSVとして出力
             foreach ($attendances as $attendance) {
                 // 出勤時刻と退勤時刻を H:i（例: 09:00）形式に整形。なければ「－」
-                $clockIn = optional($attendance->clock_in)->format('H:i') ?? '－';
-                $clockOut = optional($attendance->clock_out)->format('H:i') ?? '－';
+                $clockIn = $attendance->clock_in ? Carbon::parse($attendance->clock_in)->format('H:i') : '－';
+                $clockOut = $attendance->clock_out ? Carbon::parse($attendance->clock_out)->format('H:i') : '－';
 
                 // 休憩時間の合計を分単位で計算
                 $totalBreak = 0;
@@ -165,7 +165,7 @@ class AdminAttendanceController extends Controller
                 // 休憩時間の合計を「h:mm」形式に変換（例: 1:30）
                 $breakDuration = sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
 
-                // 勤務時間（出勤～退勤 － 休憩時間）を計算
+                // 勤務時間の合計（出勤～退勤 － 休憩時間）を計算
                 $workDuration = '0:00';
                 if ($attendance->clock_in && $attendance->clock_out) {
                     $workMinutes = Carbon::parse($attendance->clock_out)->diffInMinutes(Carbon::parse($attendance->clock_in)) - $totalBreak;
