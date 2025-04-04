@@ -161,6 +161,32 @@
     margin-top: 6px;
 }
 
+/* 月切り替えナビゲーション（共通化） */
+.month-switch {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 40px;
+}
+
+.month-link {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: gray;
+    text-decoration: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.month-current {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+
 /* レスポンシブ対応 */
 @media screen and (max-width: 767px) {
     .attendance-detail-container {

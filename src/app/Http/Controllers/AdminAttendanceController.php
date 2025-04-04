@@ -68,13 +68,14 @@ class AdminAttendanceController extends Controller
         // 対象ユーザー取得
         $user = User::findOrFail($id);
 
-        // 表示対象の月（GETパラメータまたは今月）
+        // 表示対象の月（GETパラメータ or 今月）
         $currentMonth = $request->input('month', Carbon::now()->format('Y-m'));
+        $parsedMonth = Carbon::createFromFormat('Y-m', $currentMonth);
 
         // 前月・翌月の値を計算（ボタン用）
-        $parsedMonth = Carbon::createFromFormat('Y-m', $currentMonth);
         $prevMonth = $parsedMonth->copy()->subMonth()->format('Y-m');
         $nextMonth = $parsedMonth->copy()->addMonth()->format('Y-m');
+        $displayMonth = $parsedMonth->format('Y/m'); // 表示用
 
         // 対象月の勤怠データ取得（breakTimesとuser情報を含めて取得）
         $attendances = Attendance::with('breakTimes', 'user')
@@ -85,10 +86,10 @@ class AdminAttendanceController extends Controller
             ->get()
             ->map(function ($attendance) {
                 // 合計・休憩時間の整形（すでにカラムがある場合はそれを使用）
-                $attendance->clock_in_time = optional($attendance->clock_in)->format('H:i');
-                $attendance->clock_out_time = optional($attendance->clock_out)->format('H:i');
+                $attendance->clock_in_time = $attendance->clock_in ? Carbon::parse($attendance->clock_in)->format('H:i') : null;
+                $attendance->clock_out_time = $attendance->clock_out ? Carbon::parse($attendance->clock_out)->format('H:i') : null;
 
-                // 休憩時間合計の計算
+                // 休憩合計
                 $totalBreak = 0;
                 foreach ($attendance->breakTimes as $break) {
                     if ($break->break_start && $break->break_end) {
@@ -96,12 +97,12 @@ class AdminAttendanceController extends Controller
                     }
                 }
 
-                $attendance->break_duration = floor($totalBreak / 60) . ':' . str_pad($totalBreak % 60, 2, '0', STR_PAD_LEFT);
+                $attendance->break_duration = sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
 
-                // 勤務時間計算
+                // 勤務時間
                 if ($attendance->clock_in && $attendance->clock_out) {
                     $workingMinutes = Carbon::parse($attendance->clock_out)->diffInMinutes(Carbon::parse($attendance->clock_in)) - $totalBreak;
-                    $attendance->working_duration = floor($workingMinutes / 60) . ':' . str_pad($workingMinutes % 60, 2, '0', STR_PAD_LEFT);
+                    $attendance->working_duration = sprintf('%d:%02d', floor($workingMinutes / 60), $workingMinutes % 60);
                 } else {
                     $attendance->working_duration = '0:00';
                 }
@@ -114,7 +115,9 @@ class AdminAttendanceController extends Controller
             'attendances',
             'currentMonth',
             'prevMonth',
-            'nextMonth'
+            'nextMonth',
+            'displayMonth'
         ));
     }
+
 }
