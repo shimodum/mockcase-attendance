@@ -9,6 +9,7 @@ use App\Models\BreakTime;
 use App\Models\User;
 use App\Http\Requests\AdminAttendanceUpdateRequest;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminAttendanceController extends Controller
 {
@@ -120,4 +121,75 @@ class AdminAttendanceController extends Controller
         ));
     }
 
+    // CSV出力処理（UTF-8 BOM付きでExcel文字化け防止対応済）
+    public function exportCsv(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $month = $request->input('month', Carbon::now()->format('Y-m'));
+        $parsedMonth = Carbon::createFromFormat('Y-m', $month); // 文字列の月（"2025-04"など）をCarbonの日付オブジェクトに変換
+
+        $attendances = Attendance::with('breakTimes')
+            ->where('user_id', $id)
+            ->whereYear('date', $parsedMonth->year)
+            ->whereMonth('date', $parsedMonth->month)
+            ->orderBy('date')
+            ->get();
+
+        // 出力するCSVファイルの名前を作成
+        $filename = $user->name . '_勤怠一覧_' . $parsedMonth->format('Y_m') . '.csv';
+
+        // CSV出力のレスポンスを作成（1行ずつストリーム出力することでメモリ節約）
+        $response = new StreamedResponse(function () use ($attendances) {
+            // 出力先を標準出力（ダウンロード）に設定
+            $stream = fopen('php://output', 'w');
+
+            // Excelでの文字化け防止のため UTF-8 BOM を出力
+            fputs($stream, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // CSVの1行目（見出し）を書き込む
+            fputcsv($stream, ['日付', '出勤', '退勤', '休憩時間', '勤務時間']);
+
+            // 勤怠データを1行ずつCSVとして出力
+            foreach ($attendances as $attendance) {
+                // 出勤時刻と退勤時刻を H:i（例: 09:00）形式に整形。なければ「－」
+                $clockIn = optional($attendance->clock_in)->format('H:i') ?? '－';
+                $clockOut = optional($attendance->clock_out)->format('H:i') ?? '－';
+
+                // 休憩時間の合計を分単位で計算
+                $totalBreak = 0;
+                foreach ($attendance->breakTimes as $break) {
+                    if ($break->break_start && $break->break_end) {
+                        $totalBreak += Carbon::parse($break->break_end)->diffInMinutes(Carbon::parse($break->break_start));
+                    }
+                }
+                // 休憩時間の合計を「h:mm」形式に変換（例: 1:30）
+                $breakDuration = sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
+
+                // 勤務時間（出勤～退勤 － 休憩時間）を計算
+                $workDuration = '0:00';
+                if ($attendance->clock_in && $attendance->clock_out) {
+                    $workMinutes = Carbon::parse($attendance->clock_out)->diffInMinutes(Carbon::parse($attendance->clock_in)) - $totalBreak;
+                    $workDuration = sprintf('%d:%02d', floor($workMinutes / 60), $workMinutes % 60);
+                }
+
+                // 1行分の勤怠データをCSVとして出力
+                fputcsv($stream, [
+                    Carbon::parse($attendance->date)->format('Y/m/d'),
+                    $clockIn,
+                    $clockOut,
+                    $breakDuration,
+                    $workDuration
+                ]);
+            }
+
+            // 書き込み終了
+            fclose($stream);
+        });
+
+        // ダウンロードさせるためのHTTPヘッダーを設定
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8'); // CSVとして扱う
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"'); // ファイル名指定
+
+        return $response; // 作成したCSVレスポンスを返す（ダウンロード開始）
+    }
 }

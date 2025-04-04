@@ -105,6 +105,7 @@ Route::prefix('/admin/attendance')->controller(AdminAttendanceController::class)
     Route::get('/{id}', 'show');
     Route::put('/{attendance}', 'update')->name('admin.attendance.update');
     Route::get('/staff/{id}', 'staffIndex');
+    Route::get('/staff/{id}/export', 'exportCsv'); // CSV出力処理
 });
 
 // 管理者 スタッフ一覧
