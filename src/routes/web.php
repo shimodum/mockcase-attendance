@@ -112,10 +112,8 @@ Route::prefix('/admin/attendance')->controller(AdminAttendanceController::class)
 Route::get('/admin/staff/list', [AdminStaffController::class, 'index']);
 
 
-// 今は未実装でもよい（管理者向け修正申請）
-/*
-Route::middleware(['auth', 'can:isAdmin'])->prefix('/stamp_correction_request')->controller(AdminCorrectionController::class)->group(function () {
+// 管理者 修正申請
+Route::middleware(['auth', 'can:isAdmin'])->prefix('/stamp_correction_request')->controller(StampCorrectionRequestController::class)->group(function () {
     Route::get('/approve/{attendance_correction_request}', 'showApprove')->name('stamp_correction_request.showApprove');
     Route::post('/approve/{attendance_correction_request}', 'approve')->name('stamp_correction_request.approve');
 });
-*/
