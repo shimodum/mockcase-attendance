@@ -246,6 +246,14 @@
     margin-top: 80px;
 }
 
+.notice {
+    font-weight: bold;
+    color: gray;
+    text-align: right;
+    letter-spacing: 2px;
+}
+
+
 /* レスポンシブ対応 */
 @media screen and (max-width: 767px) { /* スマホ向け */
     .attendance-detail-container {
