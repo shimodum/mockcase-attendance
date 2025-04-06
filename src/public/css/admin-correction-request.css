@@ -1,0 +1,49 @@
+/* ------------------------------- */
+/* 修正申請承認画面（管理者）*/
+/* ------------------------------- */
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 24px;
+}
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.detail-table th,
+.detail-table td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+textarea {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.btn-approve {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
