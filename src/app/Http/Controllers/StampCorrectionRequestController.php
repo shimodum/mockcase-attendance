@@ -90,6 +90,9 @@ class StampCorrectionRequestController extends Controller
             ]);
         });
 
-        return redirect()->route('stamp_correction_request.list')->with('message', '修正申請を承認しました。');
+    // 再表示時に「承認済み」と表示させるためにフラッシュメッセージを渡す
+    return redirect()
+        ->route('stamp_correction_request.showApprove', $attendance_correction_request->id)
+        ->with('approved', true);
     }
 }

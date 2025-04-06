@@ -50,9 +50,14 @@
         </tr>
     </table>
 
-    <form method="POST" action="{{ route('stamp_correction_request.approve', $correction->id) }}" class="approve-form">
-        @csrf
-        <button type="submit" class="btn-approve">承認</button>
-    </form>
+    {{-- 承認済み or 承認ボタン --}}
+    @if (session('approved') || $correction->status === 'approved')
+        <p class="approved-label">承認済み</p>
+    @else
+        <form method="POST" action="{{ route('stamp_correction_request.approve', $correction->id) }}" class="approve-form">
+            @csrf
+            <button type="submit" class="btn-approve">承認</button>
+        </form>
+    @endif
 </main>
 @endsection

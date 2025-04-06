@@ -1,6 +1,4 @@
-/* ------------------------------------ */
-/* 管理者：修正申請承認画面             */
-/* ------------------------------------ */
+/* 管理者：修正申請承認画面 */
 .correction-approve-container {
     width: 60%;
     margin: 40px auto;
@@ -60,4 +58,12 @@
 
 .btn-approve:hover {
     opacity: 0.8;
+}
+
+.approved-label {
+    text-align: right;
+    font-weight: bold;
+    color: gray;
+    font-size: 16px;
+    letter-spacing: 1px;
 }
