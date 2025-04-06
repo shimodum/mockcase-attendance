@@ -62,7 +62,7 @@
             <tr>
                 <th>備考</th>
                 <td>
-                    <textarea name="note" rows="2" cols="40" {{ $attendance->status === 'waiting_approval' ? 'readonly' : '' }}>{{ old('note', $attendance->note) }}</textarea>
+                    <textarea name="note" rows="2" cols="40" {{ $attendance->status === 'waiting_approval' ? 'readonly=readonly' : '' }}>{{ old('note', $attendance->note) }}</textarea>
 
                     @error('note')
                         <div class="error-message">{{ $message }}</div>
