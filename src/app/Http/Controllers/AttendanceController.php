@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\BreakTime;
+use App\Models\AttendanceCorrection;
 use App\Http\Requests\AttendanceCorrectionRequest;
 
 class AttendanceController extends Controller
@@ -176,12 +177,33 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::findOrFail($id);
 
-        // note（備考）を更新・ステータス変更
-        $attendance->note = $request->input('note');
-        $attendance->status = 'waiting_approval';
-        $attendance->save();
+        // 勤怠ステータスと備考を更新
+        $attendance->update([
+            'note' => $request->input('note'),
+            'status' => 'waiting_approval',
+        ]);
+
+        // 修正申請が既にあるか確認
+        $correction = AttendanceCorrection::where('attendance_id', $attendance->id)->first();
+
+        if ($correction) {
+            // 上書き
+            $correction->update([
+                'requested_clock_in' => $request->input('clock_in'),
+                'requested_clock_out' => $request->input('clock_out'),
+                'request_reason' => $request->input('note'),
+            ]);
+        } else {
+            // 新規作成
+            AttendanceCorrection::create([
+                'attendance_id' => $attendance->id,
+                'requested_clock_in' => $request->input('clock_in'),
+                'requested_clock_out' => $request->input('clock_out'),
+                'request_reason' => $request->input('note'),
+            ]);
+        }
 
         return redirect()->route('attendance.detail', $attendance->id)
             ->with('message', '修正申請を送信しました。');
-    }    
+    }
 }
