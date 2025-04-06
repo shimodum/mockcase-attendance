@@ -71,12 +71,8 @@ Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceControl
 | 修正申請関連（一般ユーザー・管理者 共通）
 |--------------------------------------------------------------------------
 */
-// まず「詳細」ルートを先に定義する必要がある
 Route::middleware(['auth'])->prefix('/stamp_correction_request')->controller(StampCorrectionRequestController::class)->group(function () {
     Route::get('/list', 'index')->name('stamp_correction_request.list');
-    Route::get('/{attendance_correction_request}', 'show')->name('stamp_correction_request.show'); // 詳細（一般ユーザー）
-    Route::get('/approve/{attendance_correction_request}', 'showApprove')->name('stamp_correction_request.showApprove');
-    Route::post('/approve/{attendance_correction_request}', 'approve')->name('stamp_correction_request.approve');
 });
 
 /*

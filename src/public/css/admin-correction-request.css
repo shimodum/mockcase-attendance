@@ -1,49 +1,63 @@
-/* ------------------------------- */
-/* 修正申請承認画面（管理者）*/
-/* ------------------------------- */
-
-.container {
-    max-width: 800px;
+/* ------------------------------------ */
+/* 管理者：修正申請承認画面             */
+/* ------------------------------------ */
+.correction-approve-container {
+    width: 60%;
     margin: 40px auto;
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
+    font-family: sans-serif;
+    color: #000;
 }
 
 .page-title {
+    display: flex;
+    align-items: center;
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 24px;
+    margin-bottom: 40px;
 }
 
-.detail-table {
+.page-title .pipe {
+    margin-right: 10px;
+    font-size: 20px;
+    color: #000;
+}
+
+.correction-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
 }
 
-.detail-table th,
-.detail-table td {
-    border: 1px solid #ccc;
-    padding: 12px;
+.correction-table th,
+.correction-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #ddd;
     text-align: left;
-}
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-textarea {
-    width: 100%;
-    padding: 8px;
     font-size: 14px;
 }
 
-.btn-approve {
-    background-color: black;
-    color: white;
-    border: none;
-    padding: 10px 24px;
+.correction-table th {
+    width: 120px;
+    background-color: #f7f7f7;
+    color: gray;
     font-weight: bold;
+}
+
+.btn-approve {
+    display: block;
+    margin-left: auto;
+    background-color: #000;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
+}
+
+.btn-approve:hover {
+    opacity: 0.8;
 }
