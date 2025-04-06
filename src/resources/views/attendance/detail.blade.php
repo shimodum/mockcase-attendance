@@ -29,10 +29,10 @@
             <tr>
                 <th>出勤・退勤</th>
                 <td>
-                    <input type="time" name="clock_in" value="{{ old('clock_in', $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '') }}">
+                    <input type="time" name="clock_in" value="{{ old('clock_in', $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '') }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
                     〜 
-                    <input type="time" name="clock_out" value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}">
-                    
+                    <input type="time" name="clock_out" value="{{ old('clock_out', $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '') }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
+
                     @error('clock_in')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -47,9 +47,9 @@
                     @php
                         $firstBreak = $attendance->breakTimes->first();
                     @endphp
-                    <input type="time" name="break_start" value="{{ old('break_start', $firstBreak && $firstBreak->break_start ? \Carbon\Carbon::parse($firstBreak->break_start)->format('H:i') : '') }}">
+                    <input type="time" name="break_start" value="{{ old('break_start', $firstBreak && $firstBreak->break_start ? \Carbon\Carbon::parse($firstBreak->break_start)->format('H:i') : '') }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
                     〜 
-                    <input type="time" name="break_end" value="{{ old('break_end', $firstBreak && $firstBreak->break_end ? \Carbon\Carbon::parse($firstBreak->break_end)->format('H:i') : '') }}">
+                    <input type="time" name="break_end" value="{{ old('break_end', $firstBreak && $firstBreak->break_end ? \Carbon\Carbon::parse($firstBreak->break_end)->format('H:i') : '') }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
 
                     @error('break_start')
                         <div class="error-message">{{ $message }}</div>
@@ -62,7 +62,7 @@
             <tr>
                 <th>備考</th>
                 <td>
-                    <textarea name="note" rows="2" cols="40">{{ old('note', $attendance->note) }}</textarea>
+                    <textarea name="note" rows="2" cols="40" {{ $attendance->status === 'waiting_approval' ? 'readonly' : '' }}>{{ old('note', $attendance->note) }}</textarea>
 
                     @error('note')
                         <div class="error-message">{{ $message }}</div>
@@ -71,8 +71,13 @@
             </tr>
         </table>
 
+        {{-- 承認待ちメッセージ or 修正ボタン --}}
         <div class="action-btn-area">
-            <button type="submit" class="btn-primary">修正</button>
+            @if ($attendance->status === 'waiting_approval')
+                <p class="notice">* 承認待ちのため修正できません。</p>
+            @else
+                <button type="submit" class="btn-primary">修正</button>
+            @endif
         </div>
     </form>
 </div>

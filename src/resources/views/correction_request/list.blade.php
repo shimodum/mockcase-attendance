@@ -65,7 +65,7 @@
                         <td>{{ $correction->request_reason }}</td>
                         <td>{{ \Carbon\Carbon::parse($correction->created_at)->format('Y/m/d') }}</td>
                         <td>
-                            <a href="{{ route('stamp_correction_request.show', $correction->id) }}">詳細</a>
+                            <a href="{{ route('attendance.detail', $correction->attendance->id) }}">詳細</a>
                         </td>
                     </tr>
                 @empty
