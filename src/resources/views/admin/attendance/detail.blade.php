@@ -32,9 +32,9 @@
             <tr>
                 <th>出勤・退勤</th>
                 <td>
-                    <input type="time" name="clock_in" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
+                    <input type="time" name="clock_in" value="{{ old('clock_in', $attendance->clock_in_time) }}">
                     〜
-                    <input type="time" name="clock_out" value="{{ old('clock_out', optional($attendance->clock_out)->format('H:i')) }}">
+                    <input type="time" name="clock_out" value="{{ old('clock_out', $attendance->clock_out_time) }}">
                     @error('clock_in')<div class="error-message">{{ $message }}</div>@enderror
                     @error('clock_out')<div class="error-message">{{ $message }}</div>@enderror
                 </td>
@@ -44,9 +44,9 @@
                 <tr>
                     <th>休憩{{ $index + 1 }}</th>
                     <td>
-                        <input type="time" name="breaks[{{ $index }}][break_start]" value="{{ old("breaks.$index.break_start", optional($break->break_start)->format('H:i')) }}">
+                        <input type="time" name="breaks[{{ $index }}][break_start]" value="{{ old("breaks.$index.break_start", $break->start_time) }}">
                         〜
-                        <input type="time" name="breaks[{{ $index }}][break_end]" value="{{ old("breaks.$index.break_end", optional($break->break_end)->format('H:i')) }}">
+                        <input type="time" name="breaks[{{ $index }}][break_end]" value="{{ old("breaks.$index.break_end", $break->end_time) }}">
                         @error("breaks.$index.break_start")<div class="error-message">{{ $message }}</div>@enderror
                         @error("breaks.$index.break_end")<div class="error-message">{{ $message }}</div>@enderror
                     </td>

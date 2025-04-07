@@ -30,8 +30,19 @@ class AdminAttendanceController extends Controller
     {
         $attendance = Attendance::with('user', 'breakTimes')->findOrFail($id);
 
+        // 出勤・退勤を H:i に整形
+        $attendance->clock_in_time = $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : null;
+        $attendance->clock_out_time = $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : null;
+
+        // 各休憩時間も整形
+        foreach ($attendance->breakTimes as $break) {
+            $break->start_time = $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : null;
+            $break->end_time = $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : null;
+        }
+
         return view('admin.attendance.detail', compact('attendance'));
     }
+
 
     // 勤怠修正処理（管理者）
     public function update(AdminAttendanceUpdateRequest $request, Attendance $attendance)
