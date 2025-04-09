@@ -10,31 +10,41 @@ use App\Http\Requests\AttendanceCorrectionRequest;
 
 class AttendanceController extends Controller
 {
-    // 出勤前画面の表示
-    public function showBefore()
+    // ユーザーの勤怠ステータスに応じて適切な画面（出勤前・出勤後・休憩中・退勤後）を表示する
+    public function show()
     {
-        return view('attendance.before');
-    }
+        $user = auth()->user(); // ログイン中のユーザー情報を取得
+        $today = now()->format('Y-m-d'); // 今日の日付（例: 2025-03-09）を取得
 
-    // 出勤後画面の表示
-    public function showWorking()
-    {
+        // 今日のそのユーザーの勤怠記録を取得
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('date', $today)
+            ->first();
+
+        // 勤怠記録がまだない → つまり「出勤前」の状態なので、出勤ボタンを表示する画面へ
+        if (!$attendance) {
+            return view('attendance.before');
+        }
+
+        if ($attendance->clock_out) {
+            return view('attendance.after');
+        }
+
+        // 勤怠記録はあるけど「退勤していない」場合は、現在休憩中かどうかを確認
+        // → break_end が null のレコードがあれば「休憩中」と判断
+        $onBreak = BreakTime::where('attendance_id', $attendance->id)
+            ->whereNull('break_end')
+            ->exists();
+
+        if ($onBreak) {
+            return view('attendance.break');
+        }
+
+        // 出勤済みで、退勤もしていなくて、休憩にも入っていない → 出勤後の通常状態
         return view('attendance.working');
     }
 
-    // 休憩中画面の表示
-    public function showBreak()
-    {
-        return view('attendance.break');
-    }
-
-    // 退勤後画面の表示
-    public function showAfter()
-    {
-        return view('attendance.after');
-    }
-
-    // 出勤登録処理（打刻）（POST）
+    // 出勤登録処理（POST）
     public function store(Request $request)
     {
         $user = auth()->user(); // ログイン中のユーザーを取得
@@ -45,7 +55,7 @@ class AttendanceController extends Controller
             ->first();
 
         if ($existing) {
-            return redirect()->route('attendance.working');
+            return redirect()->route('attendance');
         }
 
         // 新しく出勤レコードを作成
@@ -56,11 +66,10 @@ class AttendanceController extends Controller
             'status' => 'waiting_approval', // 初期ステータス
         ]);
 
-        return redirect()->route('attendance.working');
+        return redirect()->route('attendance');
     }
 
     // 休憩開始処理（POST）
-    // → 「休憩入」ボタンを押したときに呼び出される処理
     public function startBreak(Request $request)
     {
         $user = auth()->user();
@@ -79,17 +88,15 @@ class AttendanceController extends Controller
             ]);
         }
 
-        return redirect()->route('attendance.break');
+        return redirect()->route('attendance');
     }
 
     // 休憩終了処理（POST）
-    // → 「休憩戻」ボタンを押したときに呼び出される処理
     public function endBreak(Request $request)
     {
         $user = auth()->user();
         $today = now()->format('Y-m-d');
 
-        // 今日の勤怠レコードを取得
         $attendance = Attendance::where('user_id', $user->id)
             ->where('date', $today)
             ->first();
@@ -109,7 +116,7 @@ class AttendanceController extends Controller
             }
         }
 
-        return redirect()->route('attendance.working');
+        return redirect()->route('attendance');
     }
 
     // 退勤処理（POST）
@@ -118,7 +125,6 @@ class AttendanceController extends Controller
         $user = auth()->user();
         $today = now()->format('Y-m-d');
 
-        // 今日の勤怠レコードを取得
         $attendance = Attendance::where('user_id', $user->id)
             ->where('date', $today)
             ->first();
@@ -130,7 +136,7 @@ class AttendanceController extends Controller
             ]);
         }
 
-        return redirect()->route('attendance.after');
+        return redirect()->route('attendance');
     }
 
     // 勤怠一覧表示
@@ -140,8 +146,8 @@ class AttendanceController extends Controller
 
         // パラメータがある場合はその月、なければ今月
         $currentMonth = $request->input('month')
-                        ? \Carbon\Carbon::createFromFormat('Y-m', $request->input('month'))->startOfMonth()
-                        : now()->startOfMonth();
+            ? \Carbon\Carbon::createFromFormat('Y-m', $request->input('month'))->startOfMonth()
+            : now()->startOfMonth();
 
         // 当月1日～末日までの範囲
         $startDate = $currentMonth->copy()->startOfMonth();
@@ -154,20 +160,17 @@ class AttendanceController extends Controller
             ->get();
 
         // 前月・翌月の値もビューに渡す
-        $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m'); // ← routing用
-        $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m'); // ← routing用
-        $displayMonth = $currentMonth->format('Y/m'); // ← 表示用
-
+        $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m');
+        $displayMonth = $currentMonth->format('Y/m');
 
         return view('attendance.list', compact('attendances', 'prevMonth', 'nextMonth', 'displayMonth'));
     }
 
-
-
     // 勤怠詳細表示
-    public function show($id)
+    public function showDetail($id)
     {
-        $attendance = Attendance::with('breakTimes')->findOrFail($id); //休憩情報も一緒に取得
+        $attendance = Attendance::with('breakTimes')->findOrFail($id);
 
         return view('attendance.detail', compact('attendance'));
     }
@@ -187,15 +190,13 @@ class AttendanceController extends Controller
         $correction = AttendanceCorrection::where('attendance_id', $attendance->id)->first();
 
         if ($correction) {
-            // 上書き
-            $correction->update([
+            $correction->update([ // 上書き
                 'requested_clock_in' => $request->input('clock_in'),
                 'requested_clock_out' => $request->input('clock_out'),
                 'request_reason' => $request->input('note'),
             ]);
         } else {
-            // 新規作成
-            AttendanceCorrection::create([
+            AttendanceCorrection::create([ // 新規作成
                 'attendance_id' => $attendance->id,
                 'requested_clock_in' => $request->input('clock_in'),
                 'requested_clock_out' => $request->input('clock_out'),

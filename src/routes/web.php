@@ -48,20 +48,14 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 // 勤怠登録関連（一般ユーザー）
 Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceController::class)->group(function () {
-    Route::get('/', 'showBefore')->name('attendance.before');            // 出勤前画面（デフォルト）
-    Route::post('/', 'store')->name('attendance.store');                 // 勤怠登録処理（打刻）
-
-    Route::get('/working', 'showWorking')->name('attendance.working');   // 出勤後画面
-    Route::get('/break', 'showBreak')->name('attendance.break');         // 休憩中画面
+    Route::get('/', 'show')->name('attendance');
+    Route::post('/', 'store')->name('attendance.store'); // 出勤処理
     Route::post('/break/start', 'startBreak')->name('attendance.break_start'); // 休憩開始処理
-    Route::post('/break/end', 'endBreak')->name('attendance.break_end');       // 休憩終了処理
+    Route::post('/break/end', 'endBreak')->name('attendance.break_end'); // 休憩終了処理
+    Route::post('/clockout', 'clockOut')->name('attendance.clockout'); // 退勤処理
 
-    Route::post('/clockout', 'clockOut')->name('attendance.clockout');   // 退勤処理
-    Route::get('/after', 'showAfter')->name('attendance.after');         // 退勤後画面
-
-    Route::get('/list', 'index')->name('attendance.list');               // 勤怠一覧
-    Route::get('/{id}', 'show')->name('attendance.detail');              // 勤怠詳細
-
+    Route::get('/list', 'index')->name('attendance.list'); // 勤怠一覧画面表示
+    Route::get('/{id}', 'showDetail')->name('attendance.detail'); // 勤怠詳細画面表示
     Route::post('/{id}/correction_request', 'requestCorrection')->name('attendance.correction_request'); // 勤怠修正申請を送信する処理
 });
 
