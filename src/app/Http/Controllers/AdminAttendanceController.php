@@ -56,7 +56,7 @@ class AdminAttendanceController extends Controller
             'note' => $validated['note'],
         ]);
 
-        // 休憩再登録
+        // 休憩再登録（→ まとめて消して、必要なだけ追加する）
         $attendance->breakTimes()->delete();
 
         if (isset($validated['breaks'])) {
