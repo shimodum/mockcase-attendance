@@ -1,4 +1,4 @@
-{{-- 申請一覧画面（一般ユーザー） --}}
+{{-- 申請一覧画面（一般ユーザー/管理者） --}}
 @extends('layouts.app')
 
 @section('css')
@@ -65,7 +65,11 @@
                         <td>{{ $correction->request_reason }}</td>
                         <td>{{ \Carbon\Carbon::parse($correction->created_at)->format('Y/m/d') }}</td>
                         <td>
-                            <a href="{{ route('attendance.detail', $correction->attendance->id) }}">詳細</a>
+                            <a href="{{ Auth::user()->isAdmin() 
+                                ? route('stamp_correction_request.showApprove', $correction->id) 
+                                : route('attendance.detail', $correction->attendance->id) }}">
+                                詳細
+                            </a>
                         </td>
                     </tr>
                 @empty

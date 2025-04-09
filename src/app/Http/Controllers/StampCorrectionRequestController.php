@@ -57,7 +57,7 @@ class StampCorrectionRequestController extends Controller
         // 関連する勤怠情報とユーザー情報を取得
         $attendance_correction_request->load('attendance.user');
 
-        return view('admin/correction_request/approve_request_detail', [
+        return view('admin.correction_request.approve_request', [
             'correction' => $attendance_correction_request,
         ]);
     }
