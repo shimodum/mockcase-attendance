@@ -12,12 +12,14 @@
     align-items: center;
     font-size: 24px;
     font-weight: bold;
+    letter-spacing: 1px;
     margin-bottom: 40px;
 }
 
 .page-title .pipe {
     margin-right: 10px;
     font-size: 20px;
+    font-weight: bold;
     color: #000;
 }
 
@@ -36,6 +38,7 @@
     border-bottom: 1px solid #ddd;
     text-align: left;
     font-size: 14px;
+    letter-spacing: 1px;
 }
 
 .correction-table th {
