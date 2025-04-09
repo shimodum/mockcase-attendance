@@ -37,7 +37,9 @@
         <tr>
             <th>出勤・退勤</th>
             <td>
-                {{ $correction->requested_clock_in ?? '-' }} 〜 {{ $correction->requested_clock_out ?? '-' }}
+                {{ \Carbon\Carbon::parse($correction->requested_clock_in)->format('H:i') ?? '-' }}
+                〜
+                {{ \Carbon\Carbon::parse($correction->requested_clock_out)->format('H:i') ?? '-' }}
             </td>
         </tr>
         <tr>
