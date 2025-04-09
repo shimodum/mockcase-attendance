@@ -23,9 +23,15 @@ class BreakTime extends Model
         return $this->belongsTo(Attendance::class);
     }
 
-    //休憩修正申請とのリレーション（1:N）
+    //休憩修正申請とのリレーション（1:N）※履歴すべて見る場合
     public function breakTimeCorrections()
     {
-        return $this->hasMany(BreakTimeCorrection::class);
+        return $this->hasMany(BreakTimeCorrection::class, 'break_time_id');
+    }
+
+        // 最新の修正申請（1:1）
+    public function correction()
+    {
+        return $this->hasOne(BreakTimeCorrection::class, 'break_time_id')->latestOfMany();
     }
 }

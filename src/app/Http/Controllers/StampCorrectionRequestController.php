@@ -55,7 +55,7 @@ class StampCorrectionRequestController extends Controller
         }
 
         // 関連する勤怠情報とユーザー情報を取得
-        $attendance_correction_request->load('attendance.user');
+        $attendance_correction_request->load('attendance.user', 'attendance.breakTimes.correction');
 
         return view('admin.correction_request.approve_request', [
             'correction' => $attendance_correction_request,
@@ -83,7 +83,22 @@ class StampCorrectionRequestController extends Controller
                 'status'      => 'approved',
             ]);
 
-            // 修正申請の状態を「承認済み」にし、管理者コメントも保存
+            // 各休憩申請を反映
+            foreach ($attendance->breakTimes as $break) {
+                if ($break->correction) {
+                    $break->update([
+                        'break_start' => $break->correction->requested_break_start,
+                        'break_end' => $break->correction->requested_break_end,
+                    ]);
+
+                    // 申請状態を更新（もしステータスがある場合）
+                    $break->correction->update([
+                        'status' => 'approved',
+                    ]);
+                }
+            }
+
+            // 勤怠修正申請の状態を更新
             $attendance_correction_request->update([
                 'status' => 'approved',
                 'admin_comment' => $request->input('admin_comment'),

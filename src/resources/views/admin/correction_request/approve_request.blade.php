@@ -43,8 +43,17 @@
             </td>
         </tr>
         <tr>
-            <th>休憩1</th>
-            <td></td>
+            <th>休憩</th>
+        <td>
+            @foreach ($correction->attendance->breakTimes as $break)
+                @foreach ($break->breakTimeCorrections as $breakCorrection)
+                    {{ \Carbon\Carbon::parse($breakCorrection->requested_break_start)->format('H:i') ?? '-' }}
+                    〜
+                    {{ \Carbon\Carbon::parse($breakCorrection->requested_break_end)->format('H:i') ?? '-' }}
+                    <br>
+                @endforeach
+            @endforeach
+        </td>
         </tr>
         <tr>
             <th>備考</th>
