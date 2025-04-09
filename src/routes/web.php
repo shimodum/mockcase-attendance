@@ -48,7 +48,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 // 勤怠登録関連（一般ユーザー）
 Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceController::class)->group(function () {
-    Route::get('/', 'show')->name('attendance');
+    Route::get('/', 'show')->name('attendance'); //勤怠登録画面表示
     Route::post('/', 'store')->name('attendance.store'); // 出勤処理
     Route::post('/break/start', 'startBreak')->name('attendance.break_start'); // 休憩開始処理
     Route::post('/break/end', 'endBreak')->name('attendance.break_end'); // 休憩終了処理
