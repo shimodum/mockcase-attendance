@@ -26,6 +26,7 @@ class AttendanceController extends Controller
             return view('attendance.before');
         }
 
+        // 退勤後（clock_outが記録されている）
         if ($attendance->clock_out) {
             return view('attendance.after');
         }
@@ -40,7 +41,7 @@ class AttendanceController extends Controller
             return view('attendance.break');
         }
 
-        // 出勤済みで、退勤もしていなくて、休憩にも入っていない → 出勤後の通常状態
+        // 出勤後の通常状態（出勤済みで、退勤もしていなくて、休憩にも入っていない）
         return view('attendance.working');
     }
 
