@@ -71,16 +71,15 @@ class StampCorrectionRequestController extends Controller
         }
 
         // 処理をトランザクションでまとめる（どちらか失敗したらロールバック）
-        DB::transaction(function () use ($attendance_correction_request) {
+        DB::transaction(function () use ($attendance_correction_request, $request) {
             $attendance = $attendance_correction_request->attendance;
 
             // Attendanceテーブルに修正内容を反映（申請内容をそのまま上書き）
             $attendance->update([
-                'date'        => $attendance_correction_request->date,
-                'start_time'  => $attendance_correction_request->start_time,
-                'end_time'    => $attendance_correction_request->end_time,
-                'note'        => $attendance_correction_request->note,
-                'status'      => 'approved',
+                'clock_in' => $attendance_correction_request->requested_clock_in,
+                'clock_out' => $attendance_correction_request->requested_clock_out,
+                'note' => $attendance_correction_request->request_reason,
+                'status' => 'approved',
             ]);
 
             // 各休憩申請を反映
