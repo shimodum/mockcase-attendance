@@ -45,11 +45,25 @@
                 <th>休憩</th>
                 <td>
                     @php
+                        // 最初の休憩とその修正データを取得
                         $firstBreak = $attendance->breakTimes->first();
+                        $breakCorrection = $firstBreak?->correction;
+
+                        // 修正があれば優先し、それ以外は元データを表示
+                        $breakStart = old('break_start', $breakCorrection && $breakCorrection->requested_break_start
+                            ? \Carbon\Carbon::parse($breakCorrection->requested_break_start)->format('H:i')
+                            : ($firstBreak && $firstBreak->break_start ? \Carbon\Carbon::parse($firstBreak->break_start)->format('H:i') : '')
+                        );
+
+                        $breakEnd = old('break_end', $breakCorrection && $breakCorrection->requested_break_end
+                            ? \Carbon\Carbon::parse($breakCorrection->requested_break_end)->format('H:i')
+                            : ($firstBreak && $firstBreak->break_end ? \Carbon\Carbon::parse($firstBreak->break_end)->format('H:i') : '')
+                        );
                     @endphp
-                    <input type="time" name="break_start" value="{{ old('break_start', $firstBreak && $firstBreak->break_start ? \Carbon\Carbon::parse($firstBreak->break_start)->format('H:i') : '') }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
-                    〜 
-                    <input type="time" name="break_end" value="{{ old('break_end', $firstBreak && $firstBreak->break_end ? \Carbon\Carbon::parse($firstBreak->break_end)->format('H:i') : '') }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
+
+                    <input type="time" name="break_start" value="{{ $breakStart }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
+                    〜
+                    <input type="time" name="break_end" value="{{ $breakEnd }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
 
                     @error('break_start')
                         <div class="error-message">{{ $message }}</div>
@@ -71,7 +85,7 @@
             </tr>
         </table>
 
-        {{-- 承認待ちメッセージ or 修正ボタン --}}
+        {{-- 修正ボタンか承認待ちメッセージを表示 --}}
         <div class="action-btn-area">
             @if ($attendance->status === 'waiting_approval')
                 <p class="notice">* 承認待ちのため修正できません。</p>

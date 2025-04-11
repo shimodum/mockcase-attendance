@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\BreakTime;
 use App\Models\AttendanceCorrection;
+use App\Models\BreakTimeCorrection;
 use App\Http\Requests\AttendanceCorrectionRequest;
 
 class AttendanceController extends Controller
@@ -187,7 +188,7 @@ class AttendanceController extends Controller
     // 勤怠修正申請の送信処理
     public function requestCorrection(AttendanceCorrectionRequest $request, $id)
     {
-        $attendance = Attendance::findOrFail($id);
+        $attendance = Attendance::with('breakTimes')->findOrFail($id);
 
         // 勤怠ステータスと備考を更新
         $attendance->update([
@@ -195,25 +196,32 @@ class AttendanceController extends Controller
             'status' => 'waiting_approval',
         ]);
 
-        // 修正申請が既にあるか確認
-        $correction = AttendanceCorrection::where('attendance_id', $attendance->id)->first();
+    // 出退・退勤の修正申請
+    $correction = AttendanceCorrection::updateOrCreate(
+        ['attendance_id' => $attendance->id],
+        [
+            'requested_clock_in' => $request->input('clock_in'),
+            'requested_clock_out' => $request->input('clock_out'),
+            'request_reason' => $request->input('note'),
+        ]
+    );
 
-        if ($correction) {
-            $correction->update([ // 上書き
-                'requested_clock_in' => $request->input('clock_in'),
-                'requested_clock_out' => $request->input('clock_out'),
-                'request_reason' => $request->input('note'),
-            ]);
-        } else {
-            AttendanceCorrection::create([ // 新規作成
-                'attendance_id' => $attendance->id,
-                'requested_clock_in' => $request->input('clock_in'),
-                'requested_clock_out' => $request->input('clock_out'),
-                'request_reason' => $request->input('note'),
-            ]);
-        }
+    // 休憩修正申請（BreakTimeCorrectionの新規作成 or 上書き）
+    $break = $attendance->breakTimes->first(); // ← 休憩1件目に限定（必要に応じて複数対応）
 
-        return redirect()->route('attendance.detail', $attendance->id)
-            ->with('message', '修正申請を送信しました。');
+    if ($break) {
+        BreakTimeCorrection::updateOrCreate(
+            ['break_time_id' => $break->id],
+            [
+                'requested_break_start' => $request->input('break_start'),
+                'requested_break_end' => $request->input('break_end'),
+                'request_reason' => $request->input('note'),
+            ]
+        );
     }
+
+    return redirect()->route('attendance.detail', $attendance->id)
+        ->with('message', '修正申請を送信しました。');
+    }
+
 }

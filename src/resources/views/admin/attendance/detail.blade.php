@@ -13,6 +13,7 @@
 <div class="attendance-detail-container">
     <h2 class="page-title"><span class="pipe">｜</span>勤怠詳細</h2>
 
+    {{-- 管理者が勤怠を修正するフォーム（PUTメソッド） --}}
     <form method="POST" action="{{ route('admin.attendance.update', $attendance->id) }}">
         @csrf
         @method('PUT')
@@ -40,13 +41,27 @@
                 </td>
             </tr>
 
+            {{-- 休憩は複数回対応なので繰り返し表示 --}}
             @foreach ($attendance->breakTimes as $index => $break)
+                @php
+                    $correction = $break->correction;
+                    $breakStart = old("breaks.$index.break_start",
+                        $correction && $correction->requested_break_start
+                            ? \Carbon\Carbon::parse($correction->requested_break_start)->format('H:i')
+                            : $break->start_time
+                    );
+                    $breakEnd = old("breaks.$index.break_end",
+                        $correction && $correction->requested_break_end
+                            ? \Carbon\Carbon::parse($correction->requested_break_end)->format('H:i')
+                            : $break->end_time
+                    );
+                @endphp
                 <tr>
                     <th>休憩{{ $index + 1 }}</th>
                     <td>
-                        <input type="time" name="breaks[{{ $index }}][break_start]" value="{{ old("breaks.$index.break_start", $break->start_time) }}">
+                        <input type="time" name="breaks[{{ $index }}][break_start]" value="{{ $breakStart }}">
                         〜
-                        <input type="time" name="breaks[{{ $index }}][break_end]" value="{{ old("breaks.$index.break_end", $break->end_time) }}">
+                        <input type="time" name="breaks[{{ $index }}][break_end]" value="{{ $breakEnd }}">
                         @error("breaks.$index.break_start")<div class="error-message">{{ $message }}</div>@enderror
                         @error("breaks.$index.break_end")<div class="error-message">{{ $message }}</div>@enderror
                     </td>
@@ -63,7 +78,7 @@
         </table>
 
         <div class="action-btn-area">
-            {{-- 修正申請中は修正ボタン非表示にして、警告メッセージ表示 --}}
+            {{-- 修正申請中は修正ボタン非表示にして、警告メッセージを表示 --}}
             @if ($attendance->status !== 'waiting_approval')
                 <button type="submit" class="btn-primary">修正</button>
             @else
