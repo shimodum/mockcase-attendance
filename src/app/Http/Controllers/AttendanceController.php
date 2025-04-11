@@ -171,7 +171,15 @@ class AttendanceController extends Controller
     // 勤怠詳細表示
     public function showDetail($id)
     {
-        $attendance = Attendance::with('breakTimes')->findOrFail($id);
+        // 修正：correctionもwith()で取得しておく
+        $attendance = Attendance::with('breakTimes', 'correction', 'user')->findOrFail($id);
+
+        // 修正申請がある場合、表示値を申請内容で上書き
+        if ($attendance->correction) {
+            $attendance->clock_in = $attendance->correction->requested_clock_in;
+            $attendance->clock_out = $attendance->correction->requested_clock_out;
+            $attendance->note = $attendance->correction->request_reason;
+        }
 
         return view('attendance.detail', compact('attendance'));
     }

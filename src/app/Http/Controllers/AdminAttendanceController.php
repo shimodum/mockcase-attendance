@@ -28,13 +28,18 @@ class AdminAttendanceController extends Controller
     // 勤怠詳細画面（管理者）の表示
     public function show($id)
     {
-        $attendance = Attendance::with('user', 'breakTimes')->findOrFail($id);
+        $attendance = Attendance::with('user', 'breakTimes', 'correction')->findOrFail($id);
 
-        // 出勤・退勤を H:i に整形
+        // 修正申請がある場合は、表示値を申請中の内容に差し替え
+        if ($attendance->correction) {
+            $attendance->clock_in = $attendance->correction->requested_clock_in;
+            $attendance->clock_out = $attendance->correction->requested_clock_out;
+            $attendance->note = $attendance->correction->request_reason;
+        }
+
         $attendance->clock_in_time = $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : null;
         $attendance->clock_out_time = $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : null;
 
-        // 各休憩時間も整形
         foreach ($attendance->breakTimes as $break) {
             $break->start_time = $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : null;
             $break->end_time = $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : null;
