@@ -47,7 +47,7 @@
                     @php
                         // 最初の休憩とその修正データを取得
                         $firstBreak = $attendance->breakTimes->first();
-                        $breakCorrection = $firstBreak?->correction;
+                        $breakCorrection = optional($firstBreak)->correction;
 
                         // 修正があれば優先し、それ以外は元データを表示
                         $breakStart = old('break_start', $breakCorrection && $breakCorrection->requested_break_start
