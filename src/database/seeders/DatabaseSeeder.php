@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             AttendanceSeeder::class,
             BreakTimeSeeder::class,
             AttendanceCorrectionSeeder::class,
+            BreakTimeCorrectionSeeder::class,
         ]);
     }
 }
