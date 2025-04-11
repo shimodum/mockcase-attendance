@@ -100,7 +100,7 @@ class AttendanceSeeder extends Seeder
                         'date'      => $dateStr,
                         'clock_in'  => $clockIn,
                         'clock_out' => $clockOut,
-                        'status'    => 'waiting_approval',
+                        'status'    => 'unconfirmed',
                         'note' => '電車遅延のため',
                     ]);
                 }

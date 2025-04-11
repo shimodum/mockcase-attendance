@@ -16,14 +16,17 @@ class AttendanceCorrectionSeeder extends Seeder
         $users = User::where('role', 'user')->get();
 
         foreach ($users as $user) {
-            // 承認待ち用の勤怠を3件取得
-            $waitingAttendances = Attendance::where('user_id', $user->id)
-                ->where('status', 'waiting_approval')
+            // 承認待ち（申請中）の勤怠を3件取得
+            $unconfirmedAttendances = Attendance::where('user_id', $user->id)
+                ->where('status', 'unconfirmed')
+                ->doesntHave('correction') // すでに申請されていない勤怠のみ
                 ->inRandomOrder()
                 ->take(3)
                 ->get();
 
-            foreach ($waitingAttendances as $attendance) {
+            foreach ($unconfirmedAttendances as $attendance) {
+                $attendance->update(['status' => 'waiting_approval']);
+
                 AttendanceCorrection::create([
                     'attendance_id' => $attendance->id,
                     'request_reason' => '電車遅延のため',
@@ -38,14 +41,15 @@ class AttendanceCorrectionSeeder extends Seeder
                 ]);
             }
 
-            // 承認済み用の勤怠を3件取得（勤怠ステータスを approved に事前に更新）
+            // 承認済み：未申請の approved 勤怠を選定し、Correction追加
             $approvedAttendances = Attendance::where('user_id', $user->id)
+                ->where('status', 'unconfirmed') // ← 最初 unconfirmed にし、ここで approved に変更
+                ->doesntHave('correction')
                 ->inRandomOrder()
                 ->take(3)
                 ->get();
 
             foreach ($approvedAttendances as $attendance) {
-                // 勤怠データのステータスを approved に更新
                 $attendance->update(['status' => 'approved']);
 
                 AttendanceCorrection::create([

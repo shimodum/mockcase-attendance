@@ -17,7 +17,8 @@ class StampCorrectionRequestController extends Controller
         $user = Auth::user();
         $status = $request->input('status', 'waiting_approval'); // クエリパラメータからstatusを取得（デフォルト：waiting_approval）
 
-        // 修正申請を取得（ユーザーの権限に応じて絞り込み）
+        // statusが waiting_approval なら attendances テーブルのステータスではなく、
+        // 修正申請があることを条件に取得する
         $corrections = AttendanceCorrection::with(['attendance.user'])
             ->when(!$user->isAdmin(), function ($query) use ($user) {
                 // 一般ユーザーの場合：自分の申請だけを取得
@@ -25,9 +26,21 @@ class StampCorrectionRequestController extends Controller
                     $q->where('user_id', $user->id);
                 });
             })
-            ->whereHas('attendance', function ($q) use ($status) {
-                // 勤怠ステータスが一致するデータだけ取得
-                $q->where('status', $status);
+            ->whereHas('attendance', function ($q) {
+                // 退勤済みの勤怠に限定してみる
+                $q->whereNotNull('clock_out');
+            })
+            ->when($status === 'waiting_approval', function ($query) {
+                // 勤怠のステータスが waiting_approval のみ（申請中）
+                $query->whereHas('attendance', function ($q) {
+                    $q->where('status', 'waiting_approval');
+                });
+            })
+            ->when($status === 'approved', function ($query) {
+                // 勤怠のステータスが approved のみ（承認済み）
+                $query->whereHas('attendance', function ($q) {
+                    $q->where('status', 'approved');
+                });
             })
             ->orderByDesc('id')
             ->get();

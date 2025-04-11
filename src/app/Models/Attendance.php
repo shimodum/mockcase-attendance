@@ -42,4 +42,9 @@ class Attendance extends Model
     {
         return $this->hasMany(AttendanceApproval::class);
     }
+
+    public function correction()
+    {
+        return $this->hasOne(AttendanceCorrection::class);
+    }
 }
