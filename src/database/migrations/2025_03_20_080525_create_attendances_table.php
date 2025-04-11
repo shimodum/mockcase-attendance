@@ -20,7 +20,7 @@ class CreateAttendancesTable extends Migration
             $table->time('clock_in')->nullable();
             $table->time('clock_out')->nullable();
             $table->decimal('total_hours', 5, 2)->nullable();
-            $table->enum('status', ['waiting_approval', 'approved']);
+            $table->enum('status', ['unconfirmed', 'waiting_approval', 'approved']);
             $table->text('note')->nullable();
             $table->timestamps();
         });

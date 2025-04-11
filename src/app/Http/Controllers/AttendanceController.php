@@ -64,7 +64,7 @@ class AttendanceController extends Controller
             'user_id' => $user->id,
             'date' => $today,
             'clock_in' => now(),
-            'status' => 'waiting_approval', // 初期ステータス
+            'status' => 'unconfirmed', // 初期ステータス（初期登録されたが、まだ修正申請されていない状態）
         ]);
 
         return redirect()->route('attendance');
