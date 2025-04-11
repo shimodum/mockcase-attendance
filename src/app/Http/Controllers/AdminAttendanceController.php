@@ -47,6 +47,11 @@ class AdminAttendanceController extends Controller
     // 勤怠修正処理（管理者）
     public function update(AdminAttendanceUpdateRequest $request, Attendance $attendance)
     {
+        // 修正申請中のデータは編集不可にする
+        if ($attendance->status === 'waiting_approval') {
+            return back()->with('error', 'この勤怠は修正申請中のため、編集できません。');
+        }
+        
         $validated = $request->validated();
 
         $attendance->update([

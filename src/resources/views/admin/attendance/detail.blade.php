@@ -63,7 +63,15 @@
         </table>
 
         <div class="action-btn-area">
-            <button type="submit" class="btn-primary">修正</button>
+            {{-- 修正申請中は修正ボタン非表示にして、警告メッセージ表示 --}}
+            @if ($attendance->status !== 'waiting_approval')
+                <button type="submit" class="btn-primary">修正</button>
+            @else
+                <p class="text-danger">
+                    ※この勤怠は現在「修正申請中」のため、編集できません。<br>
+                    承認完了後に再度編集が可能になります。
+                </p>
+            @endif
         </div>
     </form>
 </div>
