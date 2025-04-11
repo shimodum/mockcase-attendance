@@ -37,14 +37,16 @@ class Attendance extends Model
         return $this->hasMany(AttendanceCorrection::class);
     }
 
+    // 最新の勤怠修正申請とのリレーション（1:1）
+    // 1つの勤怠に対して、最新の申請内容を取得する用途で使用
+    public function correction()
+    {
+        return $this->hasOne(AttendanceCorrection::class);
+    }
+
     //勤怠承認とのリレーション（1:N）
     public function attendanceApprovals()
     {
         return $this->hasMany(AttendanceApproval::class);
-    }
-
-    public function correction()
-    {
-        return $this->hasOne(AttendanceCorrection::class);
     }
 }
