@@ -13,7 +13,7 @@
 
         <div>
             <label>メールアドレス</label>
-            <input type="email" name="email" value="{{ old('email') }}">
+            <input type="text" name="email" value="{{ old('email') }}">
             @error('email')
                 <p class="form-error">{{ $message }}</p>
             @enderror

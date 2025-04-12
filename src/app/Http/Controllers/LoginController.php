@@ -19,7 +19,7 @@ class LoginController extends Controller
     //ログイン処理
     //ユーザーのロール（一般ユーザー or 管理者）に応じてログイン後の動きを切り分ける
     //redirect()->intended() により、ログイン前にアクセスしようとしたURLがあればそこに戻る
-    public function authenticate(Request $request)
+    public function authenticate(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
 
@@ -43,9 +43,10 @@ class LoginController extends Controller
             return redirect()->intended('/');
         }
 
+        // バリデーション済みならこのエラーは出してOK
         return back()->withErrors([
             'email' => 'ログイン情報が登録されていません',
-        ]);
+        ])->withInput(); // 入力値も保持
     }
 
 
