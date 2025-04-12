@@ -69,4 +69,25 @@ class LoginValidationTest extends TestCase
         $response->assertRedirect('/'); // ログイン成功時は、トップページにリダイレクトされることを確認
         $this->assertAuthenticatedAs($user); // ユーザーがちゃんとログインされていることを確認
     }
+
+    // 管理者アカウントで一般ユーザー用ログインフォームからログインできないことを確認するテスト
+    public function test_admin_cannot_login_from_user_login_form()
+    {
+        // 管理者ユーザーを作成
+        User::factory()->create([
+            'email' => 'admin1@example.com',
+            'password' => bcrypt('adminpass'),
+            'role' => 'admin',
+            'email_verified_at' => now(),
+        ]);
+
+        // 一般ユーザー用フォームからログインしようとする
+        $response = $this->post('/login', [
+            'email' => 'admin1@example.com',
+            'password' => 'adminpass'
+        ]);
+
+        $response->assertSessionHasErrors(['email' => '一般ユーザーアカウントではありません']);
+        $this->assertGuest(); // ログインされていないことを確認
+    }
 }
