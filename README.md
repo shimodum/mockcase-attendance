@@ -167,9 +167,9 @@
 以下の記述を phpunit.xml に追加してください。  
 
     <php>
-    <env name="APP_ENV" value="testing"/>
-    <env name="DB_CONNECTION" value="mysql"/>
-    <env name="DB_DATABASE" value="laravel_test_db"/>
+    <server name="APP_ENV" value="testing"/>
+    <server name="DB_CONNECTION" value="mysql"/>
+    <server name="DB_DATABASE" value="laravel_test_db"/>
     </php>
 
 ### 2. テストデータの準備（テストDBのみ初期化）
