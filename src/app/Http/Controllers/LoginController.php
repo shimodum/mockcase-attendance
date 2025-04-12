@@ -17,24 +17,35 @@ class LoginController extends Controller
     }
 
     //ログイン処理
-    //ロールごとにログイン後の遷移先を変更
+    //ユーザーのロール（一般ユーザー or 管理者）に応じてログイン後の動きを切り分ける
     //redirect()->intended() により、ログイン前にアクセスしようとしたURLがあればそこに戻る
-    public function authenticate(LoginRequest $request)
+    public function authenticate(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
+        // 認証を試みる（入力情報と一致するユーザーがいればログイン成功）
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            // 管理者と一般ユーザーで遷移先を分岐（ログイン成功時：管理者 → 管理者勤怠一覧、一般ユーザー → 勤怠登録画面_出勤前へリダイレクト）
-            $redirectPath = ($user->role === 'admin') ? '/admin/attendance/list' : '/attendance';
-            return redirect()->intended($redirectPath);
+            // 管理者ページにアクセスしようとしているが、管理者ではない場合はログアウト
+            if ($request->is('admin/*') && !$user->isAdmin()) {
+                Auth::logout();
+                return back()->withErrors(['email' => '管理者アカウントではありません']);
+            }
+
+            // 一般ユーザー用ログインURLで、管理者がログインしようとした場合もエラー
+            if ($request->is('login') && $user->isAdmin()) {
+                Auth::logout();
+                return back()->withErrors(['email' => '一般ユーザーアカウントではありません']);
+            }
+
+            // 正常にログインできたら、意図されたページ or トップページへリダイレクト
+            return redirect()->intended('/');
         }
 
-        // 認証失敗時：エラーメッセージ表示
         return back()->withErrors([
             'email' => 'ログイン情報が登録されていません',
-        ])->withInput();
+        ]);
     }
 
 
