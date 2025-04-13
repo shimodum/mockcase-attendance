@@ -18,7 +18,6 @@ class LoginController extends Controller
 
     //ログイン処理
     //ユーザーのロール（一般ユーザー or 管理者）に応じてログイン後の動きを切り分ける
-    //redirect()->intended() により、ログイン前にアクセスしようとしたURLがあればそこに戻る
     public function authenticate(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
@@ -39,8 +38,12 @@ class LoginController extends Controller
                 return back()->withErrors(['email' => '一般ユーザーアカウントではありません']);
             }
 
-            // 正常にログインできたら、意図されたページ or トップページへリダイレクト
-            return redirect()->intended('/');
+            // 正常にログインできたら、ロールに応じて明示的にリダイレクト
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.attendance.list'); // 管理者トップページへ
+            } else {
+                return redirect()->route('attendance'); // 一般ユーザーの出勤前画面へ
+            }
         }
 
         // バリデーション済みならこのエラーは出してOK
@@ -48,7 +51,6 @@ class LoginController extends Controller
             'email' => 'ログイン情報が登録されていません',
         ])->withInput(); // 入力値も保持
     }
-
 
     //ログアウト処理
     public function logout(Request $request)
@@ -61,5 +63,4 @@ class LoginController extends Controller
         $isAdmin = $request->is('admin/*');
         return redirect($isAdmin ? '/admin/login' : '/login');
     }
-
 }
