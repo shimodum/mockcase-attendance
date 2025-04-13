@@ -26,10 +26,6 @@ class StampCorrectionRequestController extends Controller
                     $q->where('user_id', $user->id);
                 });
             })
-            ->whereHas('attendance', function ($q) {
-                // 退勤済みの勤怠に限定してみる
-                $q->whereNotNull('clock_out');
-            })
             ->when($status === 'waiting_approval', function ($query) {
                 // 勤怠のステータスが waiting_approval のみ（申請中）
                 $query->whereHas('attendance', function ($q) {

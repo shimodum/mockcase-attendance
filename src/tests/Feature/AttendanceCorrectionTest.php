@@ -37,6 +37,7 @@ class AttendanceCorrectionTest extends TestCase
         $user = User::factory()->create();
         $attendance = Attendance::factory()->for($user)->create();
 
+        // ログイン状態で、休憩終了が開始より前の値を送る
         $this->actingAs($user)
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
@@ -45,7 +46,7 @@ class AttendanceCorrectionTest extends TestCase
                 'break_end' => '15:00',
                 'note' => '修正',
             ])
-            ->assertSessionHasErrors('break_end');
+            ->assertSessionHasErrors('break_end'); // break_end にエラーが出ることを確認
     }
 
     /** @test */
@@ -54,15 +55,16 @@ class AttendanceCorrectionTest extends TestCase
         $user = User::factory()->create();
         $attendance = Attendance::factory()->for($user)->create();
 
+        // 休憩開始が出勤前の時間になっているケース
         $this->actingAs($user)
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
-                'break_start' => '08:00', // 休憩が勤務開始前の時間
+                'break_start' => '08:00', // 勤務前に休憩開始（不正）
                 'break_end' => '09:30',
                 'note' => '修正',
             ])
-            ->assertSessionHasErrors('break_start');
+            ->assertSessionHasErrors('break_start'); // break_start に対してエラーが出ることを確認
     }
 
     /** @test */
@@ -71,13 +73,14 @@ class AttendanceCorrectionTest extends TestCase
         $user = User::factory()->create();
         $attendance = Attendance::factory()->for($user)->create();
 
+        // 備考を空にして修正申請を送る
         $this->actingAs($user)
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
-                'note' => '', // 備考が未入力
+                'note' => '', // 備考が空
             ])
-            ->assertSessionHasErrors('note');
+            ->assertSessionHasErrors('note'); // note に対してバリデーションエラーが出ることを確認
     }
 
     /** @test */
@@ -85,9 +88,9 @@ class AttendanceCorrectionTest extends TestCase
     {
         $user = User::factory()->create();
         $attendance = Attendance::factory()->for($user)->create();
-        BreakTime::factory()->for($attendance)->create(); // 休憩1件を先に作成
+        BreakTime::factory()->for($attendance)->create(); // 休憩レコードを事前に1件作っておく（修正申請の対象になる）
 
-        // ログイン状態で修正申請を送信
+        // ログイン状態で正常な修正内容をPOST送信
         $this->actingAs($user)
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
@@ -96,7 +99,7 @@ class AttendanceCorrectionTest extends TestCase
                 'break_end' => '13:00',
                 'note' => '修正内容',
             ])
-            ->assertRedirect("/attendance/{$attendance->id}");
+            ->assertRedirect("/attendance/{$attendance->id}"); // 修正申請後は勤怠詳細画面へリダイレクトされることを確認
 
         // 勤怠修正内容がデータベースに記録されているか確認
         $this->assertDatabaseHas('attendance_corrections', [
@@ -118,15 +121,18 @@ class AttendanceCorrectionTest extends TestCase
     {
         $user = User::factory()->create();
 
+        // 自分の勤怠データを「修正申請中」に設定して作成
         $attendance = Attendance::factory()->for($user)->create([
             'status' => 'waiting_approval',
-            'clock_out' => now(), //
+            'clock_out' => now(),
         ]);
 
+        // 修正申請のダミーデータを作成
         AttendanceCorrection::factory()->for($attendance)->create([
             'request_reason' => 'テスト申請',
         ]);
 
+        // ログインして一覧ページにアクセスし、テスト申請が画面に表示されることを確認
         $response = $this->actingAs($user)->get('/stamp_correction_request/list?status=waiting_approval');
         $response->assertSee('テスト申請');
     }
@@ -137,12 +143,13 @@ class AttendanceCorrectionTest extends TestCase
         $user = User::factory()->create();
         $attendance = Attendance::factory()->for($user)->create();
 
+        // 承認済みの修正申請データを作成
         AttendanceCorrection::factory()->create([
             'attendance_id' => $attendance->id,
         ]);
 
         $response = $this->actingAs($user)->get('/stamp_correction_request/list');
-        $response->assertSee('承認済');
+        $response->assertSee('承認済み');
     }
 
     /** @test */
