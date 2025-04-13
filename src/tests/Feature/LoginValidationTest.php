@@ -20,7 +20,7 @@ class LoginValidationTest extends TestCase
             'password' => 'password123',
         ]);
 
-        // 「メールアドレスを入力してください」というエラーが出ることを確認
+        // セッションにエラーメッセージ「メールアドレスを入力してください」が含まれているか確認
         $response->assertSessionHasErrors(['email' => 'メールアドレスを入力してください']);
     }
 
@@ -33,7 +33,7 @@ class LoginValidationTest extends TestCase
             'password' => '',
         ]);
 
-        // 「パスワードを入力してください」というエラーが出ることを確認
+        // セッションにエラーメッセージ「パスワードを入力してください」が含まれているか確認
         $response->assertSessionHasErrors(['password' => 'パスワードを入力してください']);
     }
 
@@ -56,7 +56,7 @@ class LoginValidationTest extends TestCase
         // ログインできるユーザーを事前に作っておく
         $user = User::factory()->create([
             'email' => 'valid@example.com',
-            'password' => bcrypt('password123'), // bcryptで暗号化して保存
+            'password' => bcrypt('password123'), //パスワードはbcryptで暗号化して保存
             'role' => 'user',
         ]);
 
@@ -67,7 +67,7 @@ class LoginValidationTest extends TestCase
         ]);
 
         $response->assertRedirect('/'); // ログイン成功時は、トップページにリダイレクトされることを確認
-        $this->assertAuthenticatedAs($user); // ユーザーがちゃんとログインされていることを確認
+        $this->assertAuthenticatedAs($user); // 認証されたユーザーが $user であることを確認
     }
 
     // 管理者アカウントで一般ユーザー用ログインフォームからログインできないことを確認するテスト
@@ -81,13 +81,15 @@ class LoginValidationTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        // 一般ユーザー用フォームからログインしようとする
+        // 一般ユーザー用フォームからログインを試みる
         $response = $this->post('/login', [
             'email' => 'admin1@example.com',
             'password' => 'adminpass'
         ]);
 
+        // 管理者はログインできない旨のエラーが出ることを確認
         $response->assertSessionHasErrors(['email' => '一般ユーザーアカウントではありません']);
-        $this->assertGuest(); // ログインされていないことを確認
+        // ゲスト（未ログイン）状態であることを確認
+        $this->assertGuest();
     }
 }

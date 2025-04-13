@@ -13,7 +13,7 @@ class RegisterValidationTest extends TestCase
     /** @test */
     public function 名前が未入力の場合、バリデーションメッセージが表示される()
     {
-        // 「名前」が未入力の状態でユーザー登録を試みる
+        // 「名前」が空の状態でユーザー登録を試みる
         $response = $this->post('/register', [
             'name' => '',
             'email' => 'test@example.com',
@@ -28,7 +28,7 @@ class RegisterValidationTest extends TestCase
     /** @test */
     public function メールアドレスが未入力の場合、バリデーションメッセージが表示される()
     {
-        // 「メールアドレス」が未入力の状態で登録を試みる
+        // 「メールアドレス」が空の状態で登録を試みる
         $response = $this->post('/register', [
             'name' => 'User',
             'email' => '',
@@ -43,7 +43,7 @@ class RegisterValidationTest extends TestCase
     /** @test */
     public function パスワードが未入力の場合、バリデーションメッセージが表示される()
     {
-        // パスワードが未入力の状態で登録を試みる
+        // パスワードが空の状態で登録を試みる
         $response = $this->post('/register', [
             'name' => 'User',
             'email' => 'test@example.com',
