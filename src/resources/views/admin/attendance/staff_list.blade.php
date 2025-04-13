@@ -16,6 +16,12 @@
         <span class="bold-title">{{ $user->name }}さんの勤怠</span>
     </h2>
 
+    {{-- 氏名とメールアドレスを確認用に表示 --}}
+    <div style="margin-bottom: 15px;">
+        <p>氏名：{{ $user->name }}</p>
+        <p>メールアドレス：{{ $user->email }}</p>
+    </div>
+
     {{-- 月切り替えナビゲーション --}}
     <div class="month-switch">
         <form method="GET" action="{{ url('/admin/attendance/staff/' . $user->id) }}">
