@@ -19,7 +19,7 @@ class AttendanceCorrectionSeeder extends Seeder
             // 承認待ち（申請中）の勤怠を3件取得
             $unconfirmedAttendances = Attendance::where('user_id', $user->id)
                 ->where('status', 'unconfirmed')
-                ->doesntHave('correction') // すでに申請されていない勤怠のみ
+                ->doesntHave('correction')
                 ->inRandomOrder()
                 ->take(3)
                 ->get();
@@ -36,6 +36,8 @@ class AttendanceCorrectionSeeder extends Seeder
                     'requested_clock_out' => $attendance->clock_out
                         ? Carbon::parse($attendance->clock_out)->addMinutes(10)
                         : null,
+                    'status' => 'waiting_approval',
+                    'admin_comment' => null, //
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
@@ -43,7 +45,7 @@ class AttendanceCorrectionSeeder extends Seeder
 
             // 承認済み：未申請の approved 勤怠を選定し、Correction追加
             $approvedAttendances = Attendance::where('user_id', $user->id)
-                ->where('status', 'unconfirmed') // ← 最初 unconfirmed にし、ここで approved に変更
+                ->where('status', 'unconfirmed')
                 ->doesntHave('correction')
                 ->inRandomOrder()
                 ->take(3)
@@ -59,6 +61,8 @@ class AttendanceCorrectionSeeder extends Seeder
                     'requested_clock_out' => $attendance->clock_out
                         ? Carbon::parse($attendance->clock_out)->addMinutes(15)
                         : null,
+                    'status' => 'approved',
+                    'admin_comment' => '承認済みのテストデータです',
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);

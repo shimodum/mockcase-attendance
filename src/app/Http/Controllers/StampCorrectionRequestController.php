@@ -82,6 +82,7 @@ class StampCorrectionRequestController extends Controller
         // 処理をトランザクションでまとめる（どちらか失敗したらロールバック）
         DB::transaction(function () use ($attendance_correction_request, $request) {
             $attendance = $attendance_correction_request->attendance;
+            $attendanceDate = $attendance->date; // 勤怠日付
 
             // Attendanceテーブルに修正内容を反映（申請内容をそのまま上書き）
             $attendance->update([
@@ -95,8 +96,12 @@ class StampCorrectionRequestController extends Controller
             foreach ($attendance->breakTimes as $break) {
                 if ($break->correction) {
                     $break->update([
-                        'break_start' => $break->correction->requested_break_start,
-                        'break_end' => $break->correction->requested_break_end,
+                        'break_start' => $break->correction->requested_break_start
+                            ? \Carbon\Carbon::parse("{$attendanceDate} {$break->correction->requested_break_start}")
+                            : null,
+                        'break_end' => $break->correction->requested_break_end
+                            ? \Carbon\Carbon::parse("{$attendanceDate} {$break->correction->requested_break_end}")
+                            : null,
                     ]);
 
                     // 申請状態を更新（もしステータスがある場合）
@@ -107,15 +112,17 @@ class StampCorrectionRequestController extends Controller
             }
 
             // 勤怠修正申請の状態を更新
+            $attendance_correction_request->refresh();
+
             $attendance_correction_request->update([
                 'status' => 'approved',
-                'admin_comment' => $request->input('admin_comment'),
+                'admin_comment' => $request->input('admin_comment', '確認済み'),
             ]);
         });
 
-    // 再表示時に「承認済み」と表示させるためにフラッシュメッセージを渡す
-    return redirect()
-        ->route('stamp_correction_request.showApprove', $attendance_correction_request->id)
-        ->with('approved', true);
+        // 再表示時に「承認済み」と表示させるためにフラッシュメッセージを渡す
+        return redirect()
+            ->route('stamp_correction_request.showApprove', $attendance_correction_request->id)
+            ->with('approved', true);
     }
 }

@@ -44,16 +44,16 @@
         </tr>
         <tr>
             <th>休憩</th>
-        <td>
-            @foreach ($correction->attendance->breakTimes as $break)
-                @foreach ($break->breakTimeCorrections as $breakCorrection)
-                    {{ \Carbon\Carbon::parse($breakCorrection->requested_break_start)->format('H:i') ?? '-' }}
-                    〜
-                    {{ \Carbon\Carbon::parse($breakCorrection->requested_break_end)->format('H:i') ?? '-' }}
-                    <br>
+            <td>
+                @foreach ($correction->attendance->breakTimes as $break)
+                    @foreach ($break->breakTimeCorrections as $breakCorrection)
+                        {{ \Carbon\Carbon::parse($breakCorrection->requested_break_start)->format('H:i') ?? '-' }}
+                        〜
+                        {{ \Carbon\Carbon::parse($breakCorrection->requested_break_end)->format('H:i') ?? '-' }}
+                        <br>
+                    @endforeach
                 @endforeach
-            @endforeach
-        </td>
+            </td>
         </tr>
         <tr>
             <th>備考</th>
@@ -67,6 +67,8 @@
     @else
         <form method="POST" action="{{ route('stamp_correction_request.approve', $correction->id) }}" class="approve-form">
             @csrf
+            {{-- テスト確認用の非表示コメント --}}
+            <input type="hidden" name="admin_comment" value="確認済み">
             <button type="submit" class="btn-approve">承認</button>
         </form>
     @endif

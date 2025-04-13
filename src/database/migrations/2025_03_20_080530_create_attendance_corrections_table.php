@@ -19,6 +19,8 @@ class CreateAttendanceCorrectionsTable extends Migration
             $table->time('requested_clock_in')->nullable();
             $table->time('requested_clock_out')->nullable();
             $table->text('request_reason', 255);
+            $table->enum('status', ['waiting_approval', 'approved'])->default('waiting_approval');
+            $table->string('admin_comment')->nullable();  // 管理者によるコメント（承認時）
             $table->timestamps();
         });
     }

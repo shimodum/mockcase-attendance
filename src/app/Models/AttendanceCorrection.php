@@ -14,6 +14,8 @@ class AttendanceCorrection extends Model
         'requested_clock_in',
         'requested_clock_out',
         'request_reason',
+        'status',
+        'admin_comment',
     ];
 
     //勤怠情報とのリレーション（N:1）

@@ -17,7 +17,6 @@ class CreateAttendanceApprovalsTable extends Migration
             $table->id();
             $table->foreignId('attendance_id')->constrained()->onDelete('cascade');
             $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
-            $table->boolean('is_approved')->default(false);
             $table->text('admin_comment', 255);
             $table->timestamps();
         });
