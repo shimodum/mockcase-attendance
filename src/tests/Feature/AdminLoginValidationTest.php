@@ -19,6 +19,7 @@ class AdminLoginValidationTest extends TestCase
             'password' => 'password123'
         ]);
 
+        // セッションに「email」フィールドのエラーがあることを確認（バリデーションメッセージが出る）
         $response->assertSessionHasErrors(['email']);
     }
 
@@ -34,7 +35,7 @@ class AdminLoginValidationTest extends TestCase
         $response->assertSessionHasErrors(['password']);
     }
 
-    // 登録されていない管理者でログインしようとすると、エラーになるか確認するテスト
+    // 登録されていない（またはパスワードが間違っている）場合にログインに失敗することを確認するテスト
     public function test_login_fails_with_invalid_credentials()
     {
         $response = $this->post('/admin/login', [
@@ -62,8 +63,8 @@ class AdminLoginValidationTest extends TestCase
             'password' => 'adminpass'
         ]);
 
-        $response->assertRedirect('/');
-        $this->assertAuthenticated();
+        $response->assertRedirect('/'); // ログイン後はトップページへリダイレクトされることを確認
+        $this->assertAuthenticated(); // ユーザーがログイン状態であることを確認
     }
 
     // 一般ユーザーが管理者用ログインフォームからログインできないことを確認するテスト
@@ -77,13 +78,13 @@ class AdminLoginValidationTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        // 管理者用フォームからログインしようとする
+        // 管理者用フォームから一般ユーザーがログインしようとする
         $response = $this->post('/admin/login', [
             'email' => 'general1@example.com',
             'password' => 'password1',
         ]);
 
         $response->assertSessionHasErrors(['email' => '管理者アカウントではありません']);
-        $this->assertGuest(); // ログインされていないことを確認
+        $this->assertGuest(); // ログインされていない（ゲスト状態）ことを確認
     }
 }
