@@ -11,17 +11,20 @@
 
 @section('content')
     @php
-        // 分 → H:i 表記に変換する共通関数
-        function formatHM($minutes) {
-            return floor($minutes / 60) . ':' . sprintf('%02d', $minutes % 60);
+        // 分 → H:i 表記に変換する共通関数（再定義防止）
+        if (!function_exists('formatHM')) {
+            function formatHM($minutes) {
+                return floor($minutes / 60) . ':' . sprintf('%02d', $minutes % 60);
+            }
         }
     @endphp
 
-    <div class="attendance-list-container">
+    <div class="attendance-list-container"> {{-- 勤怠一覧テーブルの全体コンテナ --}}
         <h2 class="page-title">
             <span class="pipe">｜</span>{{ \Carbon\Carbon::parse($date)->format('Y年n月j日') }}の勤怠
         </h2>
 
+        {{-- 日付移動フォーム（前日・翌日ボタン付き） --}}
         <form method="GET" action="{{ url('/admin/attendance/list') }}" class="date-selector-form">
             <a href="{{ url('/admin/attendance/list?date=' . \Carbon\Carbon::parse($date)->subDay()->toDateString()) }}" class="btn-date">← 前日</a>
             <input type="text" class="date-input" value="{{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}" readonly>
@@ -40,16 +43,20 @@
                 </tr>
             </thead>
             <tbody>
+                {{-- 勤怠データ1件ずつループで表示 --}}
                 @foreach ($attendances as $attendance)
                     @php
+                        // 出勤時刻と退勤時刻をCarbonで整形
                         $clockIn = \Carbon\Carbon::parse($attendance->clock_in);
                         $clockOut = \Carbon\Carbon::parse($attendance->clock_out);
                         $workMinutes = $clockIn->diffInMinutes($clockOut);
 
+                        // 休憩時間の合計（分）を求める
                         $breakMinutes = $attendance->breakTimes->sum(function ($break) {
                             return \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start);
                         });
 
+                        // 勤務時間 － 休憩時間 = 実労働時間（分）
                         $totalMinutes = $workMinutes - $breakMinutes;
                     @endphp
                     <tr>

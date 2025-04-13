@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminAttendanceController extends Controller
 {
-    // 勤怠一覧画面（管理者）の表示
+    // 勤怠一覧画面（管理者）の表示：日付指定で全スタッフの勤怠一覧を表示
     public function index(Request $request)
     {
         $date = $request->input('date', now()->toDateString());
@@ -25,26 +25,30 @@ class AdminAttendanceController extends Controller
         return view('admin.attendance.list', compact('date', 'attendances'));
     }
 
-    // 勤怠詳細画面（管理者）の表示
+    // 勤怠詳細画面（管理者）の表示：1人の勤怠詳細画面を表示
     public function show($id)
     {
+        // 指定IDの勤怠データを、ユーザー・休憩・修正申請と一緒に取得
         $attendance = Attendance::with('user', 'breakTimes', 'correction')->findOrFail($id);
 
-        // 修正申請がある場合は、表示値を申請中の内容に差し替え
+        // 修正申請がある場合は、申請内容で表示値を上書き
         if ($attendance->correction) {
             $attendance->clock_in = $attendance->correction->requested_clock_in;
             $attendance->clock_out = $attendance->correction->requested_clock_out;
             $attendance->note = $attendance->correction->request_reason;
         }
 
+        // 出勤・退勤時刻を「H:i」形式で整形（例: 09:00）
         $attendance->clock_in_time = $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : null;
         $attendance->clock_out_time = $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : null;
 
+        // 各休憩時間を整形
         foreach ($attendance->breakTimes as $break) {
             $break->start_time = $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : null;
             $break->end_time = $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : null;
         }
 
+        // 詳細画面にデータを渡して表示
         return view('admin.attendance.detail', compact('attendance'));
     }
 
@@ -59,6 +63,7 @@ class AdminAttendanceController extends Controller
         
         $validated = $request->validated();
 
+        // 勤怠情報を更新（時間はCarbonで結合）
         $attendance->update([
             'date' => $validated['date'],
             'clock_in' => $validated['clock_in'] ? Carbon::parse($validated['date'] . ' ' . $validated['clock_in']) : null,
@@ -66,9 +71,10 @@ class AdminAttendanceController extends Controller
             'note' => $validated['note'],
         ]);
 
-        // 休憩再登録（→ まとめて消して、必要なだけ追加する）
+        // 休憩データは全削除後、必要な分を再登録
         $attendance->breakTimes()->delete();
 
+        // 入力があれば休憩を再登録
         if (isset($validated['breaks'])) {
             foreach ($validated['breaks'] as $break) {
                 if (!empty($break['break_start']) && !empty($break['break_end'])) {
@@ -88,16 +94,16 @@ class AdminAttendanceController extends Controller
     public function staffIndex(Request $request, $id)
     {
         // 対象ユーザー取得
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($id); // 対象のユーザー取得
 
         // 表示対象の月（GETパラメータ or 今月）
-        $currentMonth = $request->input('month', Carbon::now()->format('Y-m'));
-        $parsedMonth = Carbon::createFromFormat('Y-m', $currentMonth);
+        $currentMonth = $request->input('month', Carbon::now()->format('Y-m')); // 月を取得（例: 2025-04）
+        $parsedMonth = Carbon::createFromFormat('Y-m', $currentMonth); // Carbonに変換
 
         // 前月・翌月の値を計算（ボタン用）
         $prevMonth = $parsedMonth->copy()->subMonth()->format('Y-m');
         $nextMonth = $parsedMonth->copy()->addMonth()->format('Y-m');
-        $displayMonth = $parsedMonth->format('Y/m'); // 表示用
+        $displayMonth = $parsedMonth->format('Y/m'); // 表示用の年月（例: 2025/04）
 
         // 対象月の勤怠データ取得（breakTimesとuser情報を含めて取得）
         $attendances = Attendance::with('breakTimes', 'user')
@@ -107,11 +113,11 @@ class AdminAttendanceController extends Controller
             ->orderBy('date')
             ->get()
             ->map(function ($attendance) {
-                // 合計・休憩時間の整形（すでにカラムがある場合はそれを使用）
+                // 出退勤時間整形
                 $attendance->clock_in_time = $attendance->clock_in ? Carbon::parse($attendance->clock_in)->format('H:i') : null;
                 $attendance->clock_out_time = $attendance->clock_out ? Carbon::parse($attendance->clock_out)->format('H:i') : null;
 
-                // 休憩合計
+                // 休憩時間合計を計算（分単位）
                 $totalBreak = 0;
                 foreach ($attendance->breakTimes as $break) {
                     if ($break->break_start && $break->break_end) {
@@ -121,7 +127,7 @@ class AdminAttendanceController extends Controller
 
                 $attendance->break_duration = sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
 
-                // 勤務時間
+                // 勤務時間（出退勤-休憩）
                 if ($attendance->clock_in && $attendance->clock_out) {
                     $workingMinutes = Carbon::parse($attendance->clock_out)->diffInMinutes(Carbon::parse($attendance->clock_in)) - $totalBreak;
                     $attendance->working_duration = sprintf('%d:%02d', floor($workingMinutes / 60), $workingMinutes % 60);
@@ -145,10 +151,11 @@ class AdminAttendanceController extends Controller
     // CSV出力処理
     public function exportCsv(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-        $month = $request->input('month', Carbon::now()->format('Y-m'));
-        $parsedMonth = Carbon::createFromFormat('Y-m', $month); // 文字列の月（"2025-04"など）をCarbonの日付オブジェクトに変換
+        $user = User::findOrFail($id); // 対象のユーザーを取得
+        $month = $request->input('month', Carbon::now()->format('Y-m')); // 月指定（なければ今月）
+        $parsedMonth = Carbon::createFromFormat('Y-m', $month); // Carbonに変換
 
+        // 対象月の勤怠データ取得
         $attendances = Attendance::with('breakTimes')
             ->where('user_id', $id)
             ->whereYear('date', $parsedMonth->year)
@@ -159,15 +166,15 @@ class AdminAttendanceController extends Controller
         // 出力するCSVファイルの名前を作成
         $filename = $user->name . '_勤怠一覧_' . $parsedMonth->format('Y_m') . '.csv';
 
-        // CSV出力のレスポンスを作成（1行ずつストリーム出力することでメモリ節約）
+        // CSVをストリーム形式でレスポンスする（1行ずつストリーム出力することでメモリ節約）
         $response = new StreamedResponse(function () use ($attendances) {
             // 出力先を標準出力（ダウンロード）に設定
             $stream = fopen('php://output', 'w');
 
-            // Excelでの文字化け防止のため UTF-8 BOM を出力
+            // Excel向けにBOM付きUTF-8で出力
             fputs($stream, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-            // CSVの1行目（見出し）を書き込む
+            // ヘッダー行
             fputcsv($stream, ['日付', '出勤', '退勤', '休憩', '合計']);
 
             // 勤怠データを1行ずつCSVとして出力
@@ -207,7 +214,7 @@ class AdminAttendanceController extends Controller
             fclose($stream);
         });
 
-        // ダウンロードさせるためのHTTPヘッダーを設定
+        // HTTPヘッダー設定（CSVとしてダウンロードさせる）
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8'); // CSVとして扱う
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"'); // ファイル名指定
 
