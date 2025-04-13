@@ -13,6 +13,7 @@ class RegisterValidationTest extends TestCase
     /** @test */
     public function 名前が未入力の場合、バリデーションメッセージが表示される()
     {
+        // 「名前」が未入力の状態でユーザー登録を試みる
         $response = $this->post('/register', [
             'name' => '',
             'email' => 'test@example.com',
@@ -20,13 +21,14 @@ class RegisterValidationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        // セッションに「名前を入力してください」というエラーがあることを確認
+        // セッションに「お名前を入力してください」というエラーがあることを確認
         $response->assertSessionHasErrors(['name' => 'お名前を入力してください']);
     }
 
     /** @test */
     public function メールアドレスが未入力の場合、バリデーションメッセージが表示される()
     {
+        // 「メールアドレス」が未入力の状態で登録を試みる
         $response = $this->post('/register', [
             'name' => 'User',
             'email' => '',
@@ -34,13 +36,14 @@ class RegisterValidationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        // メールアドレス入力を促すエラーメッセージをチェック
+        // 「メールアドレスを入力してください」というエラーメッセージが出ることを確認
         $response->assertSessionHasErrors(['email' => 'メールアドレスを入力してください']);
     }
 
     /** @test */
     public function パスワードが未入力の場合、バリデーションメッセージが表示される()
     {
+        // パスワードが未入力の状態で登録を試みる
         $response = $this->post('/register', [
             'name' => 'User',
             'email' => 'test@example.com',
@@ -48,13 +51,14 @@ class RegisterValidationTest extends TestCase
             'password_confirmation' => '',
         ]);
 
-        // パスワード未入力によるエラーが出ることを確認
+        // 「パスワードを入力してください」というエラーが出ることを確認
         $response->assertSessionHasErrors(['password' => 'パスワードを入力してください']);
     }
 
     /** @test */
     public function パスワードが8文字未満の場合、バリデーションメッセージが表示される()
     {
+        // パスワードが短すぎる状態で登録を試みる
         $response = $this->post('/register', [
             'name' => 'User',
             'email' => 'test@example.com',
@@ -62,13 +66,14 @@ class RegisterValidationTest extends TestCase
             'password_confirmation' => 'short',
         ]);
 
-        // 8文字未満はエラーになることを確認
+        // 「パスワードは8文字以上で入力してください」というエラーが表示されることを確認
         $response->assertSessionHasErrors(['password' => 'パスワードは8文字以上で入力してください']);
     }
 
     /** @test */
     public function パスワードが不一致の場合、バリデーションメッセージが表示される()
     {
+        // パスワードとパスワード確認が一致しない状態で登録を試みる
         $response = $this->post('/register', [
             'name' => 'User',
             'email' => 'test@example.com',
@@ -76,13 +81,14 @@ class RegisterValidationTest extends TestCase
             'password_confirmation' => 'mismatch',
         ]);
 
-        // 一致していないエラーが出ることを確認
+        // 「パスワードと一致しません」というエラーが出ることを確認
         $response->assertSessionHasErrors(['password' => 'パスワードと一致しません']);
     }
 
     /** @test */
     public function 正常な値で登録するとDBに登録される()
     {
+        // 入力値がすべて正しい場合に登録できるかをテスト
         $response = $this->post('/register', [
             'name' => 'テストユーザー',
             'email' => 'new@example.com',
@@ -90,10 +96,10 @@ class RegisterValidationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        // メール認証画面へリダイレクトされることを確認
+        // 登録後、メール認証画面にリダイレクトされることを確認
         $response->assertRedirect(route('verification.notice'));
 
-        // データベースにユーザーがちゃんと登録されたことを確認
+        // DBにユーザーが登録されたことを確認
         $this->assertDatabaseHas('users', [
             'name' => 'テストユーザー',
             'email' => 'new@example.com',
@@ -103,7 +109,7 @@ class RegisterValidationTest extends TestCase
     /** @test */
     public function 管理者ログイン画面で一般ユーザーIDでログインできない()
     {
-        // 一般ユーザーを作成
+        // 「一般ユーザー」としてのユーザーを作成
         $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => bcrypt('password123'),
@@ -116,6 +122,7 @@ class RegisterValidationTest extends TestCase
             'password' => 'password123',
         ]);
 
+        // エラーが表示されてログインできないことを確認
         $response->assertSessionHasErrors(); // ログイン失敗のエラーが表示されること
         $this->assertGuest(); // ログイン状態ではないことを確認
     }
@@ -123,7 +130,7 @@ class RegisterValidationTest extends TestCase
     /** @test */
     public function 一般ユーザーログイン画面で管理者IDでログインできない()
     {
-        // 管理者ユーザーを作成
+        // 「管理者ユーザー」としてユーザーを作成
         $admin = User::factory()->create([
             'email' => 'admin@example.com',
             'password' => bcrypt('adminpass'),
@@ -136,6 +143,7 @@ class RegisterValidationTest extends TestCase
             'password' => 'adminpass',
         ]);
 
+        // エラーが出てログインできないことを確認
         $response->assertSessionHasErrors(); // ログイン失敗のエラーが表示されること
         $this->assertGuest(); // ログインしていない状態であること
     }
