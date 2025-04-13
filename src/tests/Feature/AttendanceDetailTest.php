@@ -52,8 +52,8 @@ class AttendanceDetailTest extends TestCase
 
         $response = $this->actingAs($user)->get('/attendance/' . $attendance->id);
 
-        $response->assertSee('09:00'); // 出勤と退勤の時間（HH:mm）形式で確認
-        $response->assertSee('18:00'); // 出勤と退勤の時間（HH:mm）形式で確認
+        $response->assertSee('09:00');
+        $response->assertSee('18:00');
     }
 
     /** @test 勤怠詳細画面に休憩開始・終了時間が正しく表示される */
