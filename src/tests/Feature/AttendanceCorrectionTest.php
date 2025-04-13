@@ -17,16 +17,18 @@ class AttendanceCorrectionTest extends TestCase
     /** @test */
     public function 出勤より退勤が前だとエラーになる()
     {
+        // ユーザーと、そのユーザーの勤怠レコードを作成
         $user = User::factory()->create();
         $attendance = Attendance::factory()->for($user)->create();
 
+        // ログインして、修正申請をPOST送信（退勤時間が出勤時間よりも前の値）
         $this->actingAs($user)
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '18:00',
                 'clock_out' => '09:00',
                 'note' => '修正',
             ])
-            ->assertSessionHasErrors('clock_out');
+            ->assertSessionHasErrors('clock_out'); // バリデーションエラーが「clock_out」に対して出ることを確認
     }
 
     /** @test */
@@ -56,7 +58,7 @@ class AttendanceCorrectionTest extends TestCase
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
-                'break_start' => '08:00', // 勤務開始前
+                'break_start' => '08:00', // 休憩が勤務開始前の時間
                 'break_end' => '09:30',
                 'note' => '修正',
             ])
@@ -73,7 +75,7 @@ class AttendanceCorrectionTest extends TestCase
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
-                'note' => '', // 備考なし
+                'note' => '', // 備考が未入力
             ])
             ->assertSessionHasErrors('note');
     }
@@ -83,8 +85,9 @@ class AttendanceCorrectionTest extends TestCase
     {
         $user = User::factory()->create();
         $attendance = Attendance::factory()->for($user)->create();
-        BreakTime::factory()->for($attendance)->create();
+        BreakTime::factory()->for($attendance)->create(); // 休憩1件を先に作成
 
+        // ログイン状態で修正申請を送信
         $this->actingAs($user)
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
@@ -95,6 +98,7 @@ class AttendanceCorrectionTest extends TestCase
             ])
             ->assertRedirect("/attendance/{$attendance->id}");
 
+        // 勤怠修正内容がデータベースに記録されているか確認
         $this->assertDatabaseHas('attendance_corrections', [
             'attendance_id' => $attendance->id,
             'requested_clock_in' => '09:00:00',
@@ -102,6 +106,7 @@ class AttendanceCorrectionTest extends TestCase
             'request_reason' => '修正内容',
         ]);
 
+        // 休憩の修正内容もデータベースに保存されたか確認
         $this->assertDatabaseHas('break_time_corrections', [
             'requested_break_start' => '12:00:00',
             'requested_break_end' => '13:00:00',
@@ -113,9 +118,9 @@ class AttendanceCorrectionTest extends TestCase
     {
         $user = User::factory()->create();
 
-        // status を明示的に waiting_approval に！
         $attendance = Attendance::factory()->for($user)->create([
             'status' => 'waiting_approval',
+            'clock_out' => now(), //
         ]);
 
         AttendanceCorrection::factory()->for($attendance)->create([
@@ -123,8 +128,6 @@ class AttendanceCorrectionTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)->get('/stamp_correction_request/list?status=waiting_approval');
-
-        // 申請理由が一覧に表示されることを確認
         $response->assertSee('テスト申請');
     }
 
