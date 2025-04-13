@@ -15,13 +15,12 @@ class AttendanceStatusTest extends TestCase
     /** @test 出勤前のユーザーは before.blade.php が表示されること */
     public function user_without_attendance_sees_before_page()
     {
-        $user = User::factory()->create(); // ユーザーを1人作成（まだ出勤していない状態）
-        $response = $this->actingAs($user)->get('/attendance'); // 勤怠ページにアクセス
+        $user = User::factory()->create(); // ユーザーを1人作成（出勤前の状態）
+        $response = $this->actingAs($user)->get('/attendance'); // ログイン状態にして勤怠ページにアクセス
 
-        // 勤務外ステータスが表示されることを確認
-        $response->assertStatus(200); // 正常にアクセスできることを確認
+        $response->assertStatus(200); // ステータスコード200（正常）が返ってくるか
         $response->assertSee('勤務外'); // 「勤務外」という文字が表示されているか
-        $response->assertViewIs('attendance.before'); // before.blade.php が表示されているか
+        $response->assertViewIs('attendance.before'); // before.blade.php （出勤前画面）が表示されているか
     }
 
     /** @test 出勤後、退勤前、休憩中でないユーザーは working.blade.php が表示されること */
@@ -39,9 +38,9 @@ class AttendanceStatusTest extends TestCase
 
         $response = $this->actingAs($user)->get('/attendance');
 
-        $response->assertStatus(200); //正常にアクセスできることを確認
-        $response->assertSee('出勤中'); // 出勤中の表示があるか確認
-        $response->assertViewIs('attendance.working'); // working.blade.php が表示されることを確認
+        $response->assertStatus(200); // ステータスコード200（正常）が返ってくるか
+        $response->assertSee('出勤中'); // 出勤中という文字が表示されているか
+        $response->assertViewIs('attendance.working'); // working.blade.php（出勤後画面）が表示されることを確認
     }
 
     /** @test 出勤後、休憩中のユーザーは break.blade.php が表示されること */
@@ -64,9 +63,9 @@ class AttendanceStatusTest extends TestCase
 
         $response = $this->actingAs($user)->get('/attendance');
 
-        $response->assertStatus(200); // 正常にアクセスできることを確認
-        $response->assertSee('休憩中'); // 休憩中の表示があるか確認
-        $response->assertViewIs('attendance.break'); // break.blade.php が表示されているか
+        $response->assertStatus(200); // ステータスコード200（正常）が返ってくるか
+        $response->assertSee('休憩中'); // 休憩中という文字が表示されているか
+        $response->assertViewIs('attendance.break'); // break.blade.php（休憩中画面）が表示されているか
     }
 
     /** @test 退勤済みのユーザーは after.blade.php が表示されること */
@@ -83,8 +82,8 @@ class AttendanceStatusTest extends TestCase
 
         $response = $this->actingAs($user)->get('/attendance');
 
-        $response->assertStatus(200); // 正常にアクセスできることを確認
-        $response->assertSee('退勤済'); // 退勤済の表示があるか
-        $response->assertViewIs('attendance.after'); // after.blade.php が表示されているか
+        $response->assertStatus(200); // ステータスコード200（正常）が返ってくるか
+        $response->assertSee('退勤済'); // 退勤済という文字が表示されているか
+        $response->assertViewIs('attendance.after'); // after.blade.php（退勤後画面）が表示されているか
     }
 }
