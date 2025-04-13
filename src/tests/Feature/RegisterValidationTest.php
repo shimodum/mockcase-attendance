@@ -39,6 +39,20 @@ class RegisterValidationTest extends TestCase
     }
 
     /** @test */
+    public function パスワードが未入力の場合、バリデーションメッセージが表示される()
+    {
+        $response = $this->post('/register', [
+            'name' => 'User',
+            'email' => 'test@example.com',
+            'password' => '',
+            'password_confirmation' => '',
+        ]);
+
+        // パスワード未入力によるエラーが出ることを確認
+        $response->assertSessionHasErrors(['password' => 'パスワードを入力してください']);
+    }
+
+    /** @test */
     public function パスワードが8文字未満の場合、バリデーションメッセージが表示される()
     {
         $response = $this->post('/register', [
