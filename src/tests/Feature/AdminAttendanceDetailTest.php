@@ -23,6 +23,7 @@ class AdminAttendanceDetailTest extends TestCase
             'note' => 'テスト備考'
         ]);
 
+        // 管理者として勤怠詳細ページにアクセス
         $response = $this->actingAs($admin)->get("/admin/attendance/{$attendance->id}");
 
         $response->assertStatus(200)
@@ -36,31 +37,35 @@ class AdminAttendanceDetailTest extends TestCase
     /** @test */
     public function 出勤より退勤が前だとエラーになる()
     {
+        // 管理者ユーザーと出勤データ作成
         $admin = User::factory()->create(['role' => 'admin']);
         $attendance = Attendance::factory()->for($admin)->create();
 
+        // 管理者として勤務修正フォームを送信（出勤が18時・退勤が9時 → 不正）
         $this->actingAs($admin)
             ->put("/admin/attendance/{$attendance->id}", [
-                'date' => $attendance->date->format('Y-m-d'),
+                'date' => \Carbon\Carbon::parse($attendance->date)->format('Y-m-d'),
                 'clock_in' => '18:00',
                 'clock_out' => '09:00',
                 'note' => '出退勤逆',
             ])
-            ->assertSessionHasErrors('clock_out');
+            ->assertSessionHasErrors('clock_out'); // clock_out にエラーがあることを確認
     }
 
     /** @test */
     public function 休憩開始が退勤後ならエラーになる()
     {
+        // 管理者ユーザーと出勤データ作成（09:00〜18:00勤務）
         $admin = User::factory()->create(['role' => 'admin']);
         $attendance = Attendance::factory()->for($admin)->create([
             'clock_in' => '09:00:00',
             'clock_out' => '18:00:00',
         ]);
 
+        // 勤務時間外の19:00〜19:30を休憩として登録 → 不正
         $this->actingAs($admin)
             ->put("/admin/attendance/{$attendance->id}", [
-                'date' => $attendance->date->format('Y-m-d'),
+                'date' => \Carbon\Carbon::parse($attendance->date)->format('Y-m-d'),
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
                 'breaks' => [
@@ -74,15 +79,17 @@ class AdminAttendanceDetailTest extends TestCase
     /** @test */
     public function 休憩終了が出勤前ならエラーになる()
     {
+        // 管理者ユーザーと出勤データ作成
         $admin = User::factory()->create(['role' => 'admin']);
         $attendance = Attendance::factory()->for($admin)->create([
             'clock_in' => '09:00:00',
             'clock_out' => '18:00:00',
         ]);
 
+        // 勤務前の07:00〜08:30を休憩として登録 → 不正
         $this->actingAs($admin)
             ->put("/admin/attendance/{$attendance->id}", [
-                'date' => $attendance->date->format('Y-m-d'),
+                'date' => \Carbon\Carbon::parse($attendance->date)->format('Y-m-d'),
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
                 'breaks' => [
@@ -96,16 +103,18 @@ class AdminAttendanceDetailTest extends TestCase
     /** @test */
     public function 備考が未入力だとエラーになる()
     {
+        // 管理者ユーザーと出勤データ作成
         $admin = User::factory()->create(['role' => 'admin']);
         $attendance = Attendance::factory()->for($admin)->create();
 
+        // 備考が空欄のまま送信 → バリデーションエラーが出る
         $this->actingAs($admin)
             ->put("/admin/attendance/{$attendance->id}", [
-                'date' => $attendance->date->format('Y-m-d'),
+                'date' => \Carbon\Carbon::parse($attendance->date)->format('Y-m-d'),
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
                 'note' => '', // 備考未入力
             ])
-            ->assertSessionHasErrors('note');
+            ->assertSessionHasErrors('note'); // 備考のバリデーションエラーを確認
     }
 }

@@ -12,6 +12,7 @@ class AdminAttendanceUpdateRequest extends FormRequest
         return true;
     }
 
+    // 入力内容のルールを定義
     public function rules()
     {
         return [
@@ -24,6 +25,7 @@ class AdminAttendanceUpdateRequest extends FormRequest
         ];
     }
 
+    // バリデーションエラーのカスタムメッセージ
     public function messages()
     {
         return [
@@ -46,20 +48,29 @@ class AdminAttendanceUpdateRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator) //休憩時間が勤務時間外でないこと のバリデーション
+    // 独自のバリデーション処理を追加（ルールだけでは判断できないチェック）
+    public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            // 出勤・退勤時刻をCarbon形式（日付＋時間）で用意
             $clockIn = Carbon::parse("{$this->date} {$this->clock_in}");
             $clockOut = Carbon::parse("{$this->date} {$this->clock_out}");
 
+            // 複数の休憩がある場合に1つずつチェック
             if (is_array($this->breaks)) {
                 foreach ($this->breaks as $index => $break) {
                     if (!empty($break['break_start']) && !empty($break['break_end'])) {
                         $breakStart = Carbon::parse("{$this->date} {$break['break_start']}");
                         $breakEnd = Carbon::parse("{$this->date} {$break['break_end']}");
 
+                        // 勤務時間外の休憩
                         if ($breakStart < $clockIn || $breakEnd > $clockOut) {
                             $validator->errors()->add("breaks.{$index}.break_start", '休憩時間が勤務時間外です');
+                        }
+
+                        // 休憩終了が出勤時刻より前
+                        if ($breakEnd < $clockIn) {
+                            $validator->errors()->add("breaks.{$index}.break_end", '休憩終了時刻が出勤前になっています');
                         }
                     }
                 }
