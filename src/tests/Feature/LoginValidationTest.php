@@ -66,7 +66,7 @@ class LoginValidationTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertRedirect('/'); // ログイン成功時は、トップページにリダイレクトされることを確認
+        $response->assertRedirect('/attendance'); // ログイン成功時は、勤怠登録画面にリダイレクトされることを確認
         $this->assertAuthenticatedAs($user); // 認証されたユーザーが $user であることを確認
     }
 

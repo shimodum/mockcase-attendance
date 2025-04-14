@@ -63,7 +63,7 @@ class AdminLoginValidationTest extends TestCase
             'password' => 'adminpass'
         ]);
 
-        $response->assertRedirect('/'); // ログイン後はトップページへリダイレクトされることを確認
+        $response->assertRedirect('/admin/attendance/list'); // ログイン後は勤怠一覧画面へリダイレクトされることを確認
         $this->assertAuthenticated(); // ユーザーがログイン状態であることを確認
     }
 
