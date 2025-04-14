@@ -17,10 +17,12 @@
     </h2>
 
     {{-- 氏名とメールアドレスを確認用に表示 --}}
-    <div style="margin-bottom: 15px;">
-        <p>氏名：{{ $user->name }}</p>
-        <p>メールアドレス：{{ $user->email }}</p>
-    </div>
+    @if (app()->environment('testing'))
+        <div style="margin-bottom: 15px;">
+            <p>氏名：{{ $user->name }}</p>
+            <p>メールアドレス：{{ $user->email }}</p>
+        </div>
+    @endif
 
     {{-- 月切り替えナビゲーション --}}
     <div class="month-switch">
