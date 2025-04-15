@@ -48,6 +48,15 @@
   - メール送信を開発環境で確認するためのツール
 ---
 
+## URL
+一般ユーザ  
+ユーザ登録画面：http://localhost/register  
+ログイン画面：http://localhost/login  
+管理者  
+ログイン画面：http://localhost/admin/login  
+
+---
+
 ## デフォルトのデータベース設定
 `docker-compose.yml` で設定されているデータベースの初期情報は以下の通りです。  
 デフォルトのパスワードをそのまま本番環境で使用しないでください。
