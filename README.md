@@ -149,10 +149,11 @@
 - テスト実行時は、上記の「ログイン情報（テストアカウント）」を使用してください。  
 - 以下のコマンドを実行して、テスト専用のデータベース（laravel_test_db）を作成してください。  
 
+    ```bash
     docker compose exec mysql bash  
     mysql -u root -p  
     create database laravel_test_db;  
-
+    exit
 
 ### 1. **テスト環境の準備**
 #### **テスト環境の切り替え**
