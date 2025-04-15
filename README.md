@@ -147,6 +147,10 @@
 - テストを実行する前に、 **必ず `.env.testing` を作成し、 `phpunit.xml` の設定を確認してください。**  
 - テスト実行時は **通常環境のデータベースが初期化されないよう、必ずテスト環境（`.env.testing`）を使用してください。**  
 - テスト実行時は、上記の「ログイン情報（テストアカウント）」を使用してください。  
+- 以下のコマンドを実行して、テスト専用のデータベース（laravel_test_db）を作成してください。  
+    docker compose exec mysql bash
+    mysql -u root -p
+    create database laravel_test_db;
 
 ### 1. **テスト環境の準備**
 #### **テスト環境の切り替え**
