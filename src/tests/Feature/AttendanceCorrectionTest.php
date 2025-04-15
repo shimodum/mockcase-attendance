@@ -28,7 +28,7 @@ class AttendanceCorrectionTest extends TestCase
                 'clock_out' => '09:00',
                 'note' => '修正',
             ])
-            ->assertSessionHasErrors('clock_out'); // バリデーションエラーが「clock_out」に対して出ることを確認
+            ->assertSessionHasErrors('clock_out'); // clock_out にバリデーションエラーが発生することを確認
     }
 
     /** @test */
@@ -47,7 +47,7 @@ class AttendanceCorrectionTest extends TestCase
                 ],
                 'note' => '修正',
             ])
-            ->assertSessionHasErrors('breaks.0.break_end'); // break_end にエラーが出ることを確認
+            ->assertSessionHasErrors('breaks.0.break_end'); // break_end にバリデーションエラーが出ることを確認
     }
 
     /** @test */
@@ -66,7 +66,7 @@ class AttendanceCorrectionTest extends TestCase
                 ],
                 'note' => '修正',
             ])
-            ->assertSessionHasErrors('breaks.0.break_start'); // break_start に対してエラーが出ることを確認
+            ->assertSessionHasErrors('breaks.0.break_start'); // break_start にバリデーションエラーが出ることを確認
     }
 
     /** @test */
@@ -82,7 +82,7 @@ class AttendanceCorrectionTest extends TestCase
                 'clock_out' => '18:00',
                 'note' => '', // 備考が空
             ])
-            ->assertSessionHasErrors('note'); // note に対してバリデーションエラーが出ることを確認
+            ->assertSessionHasErrors('note'); // note にバリデーションエラーが出ることを確認
     }
 
     /** @test */
@@ -130,7 +130,7 @@ class AttendanceCorrectionTest extends TestCase
             'clock_out' => now(),
         ]);
 
-        // 修正申請のダミーデータを作成
+        // 申請理由付きで修正申請データを作成
         AttendanceCorrection::factory()->for($attendance)->create([
             'request_reason' => 'テスト申請',
         ]);
