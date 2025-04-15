@@ -30,20 +30,22 @@ Route::controller(LoginController::class)->group(function () {
     Route::post('/login', 'authenticate');
 });
 
-// メール認証ルート
+// メール認証誘導画面
 Route::get('/email/verify', function () {
-    return view('auth.verify'); // 認証誘導画面
+    return view('auth.verify');
 })->middleware('auth')->name('verification.notice');
 
+// メール認証リンクをクリックしたときの処理
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return redirect('/attendance'); // 認証後の遷移先（出勤前画面）
+    $request->fulfill(); // メール認証を完了させる
+    return redirect('/attendance'); // 勤怠画面にリダイレクト
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
+// 認証メールを再送信する処理
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('message', '認証メールを再送信しました。');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send'); // 過度な連打防止のため、1分間に最大6回までリクエスト可能
 
 
 // 勤怠登録関連（一般ユーザー）
@@ -56,13 +58,13 @@ Route::middleware(['auth'])->prefix('/attendance')->controller(AttendanceControl
 
     Route::get('/list', 'index')->name('attendance.list'); // 勤怠一覧画面表示
     Route::get('/{id}', 'showDetail')->name('attendance.detail'); // 勤怠詳細画面表示
-    Route::post('/{id}/correction_request', 'requestCorrection')->name('attendance.correction_request'); // 勤怠修正申請を送信する処理
+    Route::post('/{id}/correction_request', 'requestCorrection')->name('attendance.correction_request'); // 修正申請処理
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| 修正申請関連（一般ユーザー・管理者 共通）
+| 修正申請関連（一般ユーザー/管理者 共通）
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->prefix('/stamp_correction_request')->controller(StampCorrectionRequestController::class)->group(function () {
@@ -71,7 +73,7 @@ Route::middleware(['auth'])->prefix('/stamp_correction_request')->controller(Sta
 
 /*
 |--------------------------------------------------------------------------
-| ログアウト処理（一般ユーザー・管理者 共通）
+| ログアウト処理（一般ユーザー/管理者 共通）
 |--------------------------------------------------------------------------
 */
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -91,10 +93,10 @@ Route::controller(LoginController::class)->group(function () {
 
 // 管理者 勤怠関連
 Route::prefix('/admin/attendance')->controller(AdminAttendanceController::class)->group(function () {
-    Route::get('/list', 'index')->name('admin.attendance.list');
-    Route::get('/{id}', 'show');
-    Route::put('/{attendance}', 'update')->name('admin.attendance.update');
-    Route::get('/staff/{id}', 'staffIndex');
+    Route::get('/list', 'index')->name('admin.attendance.list'); // 勤怠一覧
+    Route::get('/{id}', 'show'); // 勤怠詳細
+    Route::put('/{attendance}', 'update')->name('admin.attendance.update'); // 勤怠修正（保存）
+    Route::get('/staff/{id}', 'staffIndex'); // 特定のスタッフの勤怠一覧
     Route::get('/staff/{id}/export', 'exportCsv'); // CSV出力処理
 });
 
@@ -102,7 +104,7 @@ Route::prefix('/admin/attendance')->controller(AdminAttendanceController::class)
 Route::get('/admin/staff/list', [AdminStaffController::class, 'index']);
 
 
-// 管理者 修正申請
+// 管理者 修正申請承認処理
 Route::middleware(['auth', 'can:isAdmin'])->prefix('/stamp_correction_request')->controller(StampCorrectionRequestController::class)->group(function () {
     Route::get('/approve/{attendance_correction_request}', 'showApprove')->name('stamp_correction_request.showApprove');
     Route::post('/approve/{attendance_correction_request}', 'approve')->name('stamp_correction_request.approve');
