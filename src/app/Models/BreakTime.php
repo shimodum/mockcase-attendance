@@ -29,7 +29,7 @@ class BreakTime extends Model
         return $this->hasMany(BreakTimeCorrection::class, 'break_time_id');
     }
 
-        // 最新の修正申請（1:1）
+    // 最新の修正申請（1:1）
     public function correction()
     {
         return $this->hasOne(BreakTimeCorrection::class, 'break_time_id')->latestOfMany();
