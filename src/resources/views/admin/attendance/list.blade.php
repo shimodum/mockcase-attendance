@@ -19,7 +19,8 @@
         }
     @endphp
 
-    <div class="attendance-list-container"> {{-- 勤怠一覧テーブルの全体コンテナ --}}
+    {{-- 勤怠一覧画面の全体を囲むコンテナ --}}
+    <div class="attendance-list-container">
         <h2 class="page-title">
             <span class="pipe">｜</span>{{ \Carbon\Carbon::parse($date)->format('Y年n月j日') }}の勤怠
         </h2>
@@ -31,6 +32,7 @@
             <a href="{{ url('/admin/attendance/list?date=' . \Carbon\Carbon::parse($date)->addDay()->toDateString()) }}" class="btn-date">翌日 →</a>
         </form>
 
+        {{-- 勤怠データの一覧テーブル --}}
         <table class="attendance-table">
             <thead>
                 <tr>

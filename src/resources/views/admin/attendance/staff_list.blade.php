@@ -16,7 +16,7 @@
         <span class="bold-title">{{ $user->name }}さんの勤怠</span>
     </h2>
 
-    {{-- 氏名とメールアドレスを確認用に表示 --}}
+    {{-- 氏名とメールアドレスをテスト環境のみで表示（画面確認・テスト用） --}}
     @if (app()->environment('testing'))
         <div style="margin-bottom: 15px;">
             <p>氏名：{{ $user->name }}</p>
@@ -24,7 +24,7 @@
         </div>
     @endif
 
-    {{-- 月切り替えナビゲーション --}}
+    {{-- 月を切り替えるナビゲーション（前月・今月・翌月） --}}
     <div class="month-switch">
         <form method="GET" action="{{ url('/admin/attendance/staff/' . $user->id) }}">
             <input type="hidden" name="month" value="{{ $prevMonth }}">
@@ -57,6 +57,8 @@
             @php
                 $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
             @endphp
+
+            {{-- 勤怠データが存在する場合は1件ずつループで表示 --}}
             @forelse ($attendances as $attendance)
                 <tr>
                     <td class="left-align">

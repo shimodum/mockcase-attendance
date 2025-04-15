@@ -23,7 +23,7 @@
         <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="month-link">翌月 →</a>
     </div>
 
-    {{-- 勤怠テーブル --}}
+    {{-- 勤怠データの一覧テーブル --}}
     <table class="attendance-table">
         <thead>
             <tr>
@@ -36,6 +36,7 @@
             </tr>
         </thead>
         <tbody>
+            {{-- 勤怠データを1件ずつ表示 --}}
             @foreach ($attendances as $attendance)
                 @php
                     $totalBreakMinutes = 0;
