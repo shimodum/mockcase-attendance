@@ -50,12 +50,16 @@
             {{-- 休憩は複数回対応なので繰り返し表示 --}}
             @foreach ($attendance->breakTimes as $index => $break)
                 @php
-                    $correction = $break->correction;
+                    $correction = $break->correction;  // 対応する修正申請があるか確認
+
+                    // 休憩開始時間（修正申請がある場合はそちらを優先）
                     $breakStart = old("breaks.$index.break_start",
                         $correction && $correction->requested_break_start
                             ? \Carbon\Carbon::parse($correction->requested_break_start)->format('H:i')
                             : $break->start_time
                     );
+
+                    // 休憩終了時間（修正申請がある場合はそちらを優先）
                     $breakEnd = old("breaks.$index.break_end",
                         $correction && $correction->requested_break_end
                             ? \Carbon\Carbon::parse($correction->requested_break_end)->format('H:i')
@@ -63,7 +67,7 @@
                     );
                 @endphp
                 <tr>
-                    <th>休憩{{ $index + 1 }}</th>
+                    <th>休憩{{ $index + 1 }}</th> {{-- 休憩1、休憩2、… --}}
                     <td>
                         <input type="time" name="breaks[{{ $index }}][break_start]"
                             value="{{ $breakStart }}"
@@ -90,7 +94,7 @@
         </table>
 
         <div class="action-btn-area">
-            {{-- 修正申請中は修正ボタン非表示にして、警告メッセージを表示 --}}
+            {{-- 修正申請中は修正ボタンを非表示にして、注意メッセージを表示 --}}
             @if ($attendance->status !== 'waiting_approval')
                 <button type="submit" class="btn-primary">修正</button>
             @else
