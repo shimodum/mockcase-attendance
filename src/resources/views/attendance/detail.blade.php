@@ -46,23 +46,25 @@
                 </td>
             </tr>
 
-            {{-- 複数の休憩欄 --}}
+            {{-- 複数の休憩時間の入力欄（休憩1、休憩2など） --}}
             @php
-                $breaks = $attendance->breakTimes->all();
-                $breakCount = count($breaks);
+                $breaks = $attendance->breakTimes->all(); // 登録されている休憩データを配列に変換
+                $breakCount = count($breaks); // 休憩の件数
             @endphp
 
-            @for ($i = 0; $i <= $breakCount; $i++)
+            @for ($i = 0; $i <= $breakCount; $i++) {{-- 休憩の件数分＋1ループ --}}
                 @php
-                    $break = $breaks[$i] ?? null;
-                    $correction = optional($break)->correction;
+                    $break = $breaks[$i] ?? null; // 指定のインデックスの休憩データ（ない場合はnull）
+                    $correction = optional($break)->correction; // 修正申請があれば取得
 
+                    // 休憩開始の表示値（修正申請があればそれを優先）
                     $breakStart = old("breaks.$i.break_start",
                         $correction && $correction->requested_break_start
                             ? \Carbon\Carbon::parse($correction->requested_break_start)->format('H:i')
                             : ($break && $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '')
                     );
 
+                    // 休憩終了の表示値（修正申請があればそれを優先）
                     $breakEnd = old("breaks.$i.break_end",
                         $correction && $correction->requested_break_end
                             ? \Carbon\Carbon::parse($correction->requested_break_end)->format('H:i')
@@ -70,10 +72,12 @@
                     );
                 @endphp
                 <tr>
-                    <th>休憩{{ $i + 1 }}</th>
+                    <th>休憩{{ $i + 1 }}</th> {{-- 休憩1、休憩2、... --}}
                     <td>
+                        {{-- 休憩開始の入力欄 --}}
                         <input type="time" name="breaks[{{ $i }}][break_start]" value="{{ $breakStart }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
                         〜
+                        {{-- 休憩終了の入力欄 --}}
                         <input type="time" name="breaks[{{ $i }}][break_end]" value="{{ $breakEnd }}" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
 
                         {{-- バリデーションエラー表示 --}}
