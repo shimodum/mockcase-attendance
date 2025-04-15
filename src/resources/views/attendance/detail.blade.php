@@ -91,7 +91,7 @@
                 <th>備考</th>
                 <td>
                     {{-- 備考欄（修正申請中は編集不可） --}}
-                    <textarea name="note" rows="2" cols="40" {{ $attendance->status === 'waiting_approval' ? 'readonly' : '' }}>{{ old('note', $attendance->note) }}</textarea>
+                    <textarea name="note" rows="2" cols="40" {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>{{ old('note', $attendance->note) }}</textarea>
 
                     {{-- 備考のバリデーションエラー表示 --}}
                     @error('note')
