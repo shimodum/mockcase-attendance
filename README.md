@@ -52,6 +52,7 @@
 一般ユーザ  
 ユーザ登録画面：http://localhost/register  
 ログイン画面：http://localhost/login  
+
 管理者  
 ログイン画面：http://localhost/admin/login  
 
