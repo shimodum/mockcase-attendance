@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Carbon;
 
 class AttendanceCorrectionRequest extends FormRequest
 {
@@ -11,23 +12,17 @@ class AttendanceCorrectionRequest extends FormRequest
         return true;
     }
 
-    /**
-     * 通常のバリデーションルール定義
-     */
     public function rules()
     {
         return [
             'clock_in' => ['required', 'date_format:H:i'],
             'clock_out' => ['required', 'date_format:H:i', 'after:clock_in'],
-            'break_start' => ['nullable', 'date_format:H:i'],
-            'break_end' => ['nullable', 'date_format:H:i', 'after:break_start'],
+            'breaks.*.break_start' => ['nullable', 'date_format:H:i'],
+            'breaks.*.break_end' => ['nullable', 'date_format:H:i', 'after:breaks.*.break_start'],
             'note' => ['required', 'string', 'max:255'],
         ];
     }
 
-    /**
-     * エラーメッセージ定義
-     */
     public function messages()
     {
         return [
@@ -40,31 +35,34 @@ class AttendanceCorrectionRequest extends FormRequest
 
             'breaks.*.break_start.date_format' => '休憩開始時刻は「H:i」形式で入力してください',
             'breaks.*.break_end.date_format' => '休憩終了時刻は「H:i」形式で入力してください',
-            'break_end.after' => '休憩終了時刻は休憩開始時刻より後の時刻を入力してください',
+            'breaks.*.break_end.after' => '休憩終了時刻は休憩開始時刻より後の時刻を入力してください',
 
             'note.required' => '備考を記入してください',
             'note.max' => '備考は255文字以内で入力してください',
         ];
     }
 
-    /**
-     * カスタムバリデーション（勤務時間外の休憩を防ぐ）
-     */
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            $clockIn = $this->input('clock_in');
-            $clockOut = $this->input('clock_out');
-            $breakStart = $this->input('break_start');
-            $breakEnd = $this->input('break_end');
+            $clockIn = Carbon::createFromFormat('H:i', $this->input('clock_in'));
+            $clockOut = Carbon::createFromFormat('H:i', $this->input('clock_out'));
 
-            // 全ての時間が揃っている場合のみチェック
-            if ($clockIn && $clockOut) {
-                if ($breakStart && $breakStart < $clockIn) {
-                    $validator->errors()->add('break_start', '休憩時間が勤務時間外です');
-                }
-                if ($breakEnd && $breakEnd > $clockOut) {
-                    $validator->errors()->add('break_end', '休憩時間が勤務時間外です');
+            // 複数休憩の勤務時間外チェック
+            if (is_array($this->breaks)) {
+                foreach ($this->breaks as $index => $break) {
+                    if (!empty($break['break_start']) && !empty($break['break_end'])) {
+                        $start = Carbon::createFromFormat('H:i', $break['break_start']);
+                        $end = Carbon::createFromFormat('H:i', $break['break_end']);
+
+                        if ($start < $clockIn || $end > $clockOut) {
+                            $validator->errors()->add("breaks.$index.break_start", '休憩時間が勤務時間外です');
+                        }
+
+                        if ($end < $clockIn) {
+                            $validator->errors()->add("breaks.$index.break_end", '休憩終了時刻が出勤前になっています');
+                        }
+                    }
                 }
             }
         });
