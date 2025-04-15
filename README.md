@@ -148,6 +148,7 @@
 - テスト実行時は **通常環境のデータベースが初期化されないよう、必ずテスト環境（`.env.testing`）を使用してください。**  
 - テスト実行時は、上記の「ログイン情報（テストアカウント）」を使用してください。  
 - 以下のコマンドを実行して、テスト専用のデータベース（laravel_test_db）を作成してください。  
+
     docker compose exec mysql bash  
     mysql -u root -p  
     create database laravel_test_db;  
