@@ -26,16 +26,22 @@
             <tr>
                 <th>日付</th>
                 <td>
-                    <input type="date" name="date" value="{{ old('date', \Carbon\Carbon::parse($attendance->date)->format('Y-m-d')) }}">
+                    <input type="date" name="date"
+                        value="{{ old('date', \Carbon\Carbon::parse($attendance->date)->format('Y-m-d')) }}"
+                        {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
                     @error('date')<div class="error-message">{{ $message }}</div>@enderror
                 </td>
             </tr>
             <tr>
                 <th>出勤・退勤</th>
                 <td>
-                    <input type="time" name="clock_in" value="{{ old('clock_in', $attendance->clock_in_time) }}">
+                    <input type="time" name="clock_in"
+                        value="{{ old('clock_in', $attendance->clock_in_time) }}"
+                        {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
                     〜
-                    <input type="time" name="clock_out" value="{{ old('clock_out', $attendance->clock_out_time) }}">
+                    <input type="time" name="clock_out"
+                        value="{{ old('clock_out', $attendance->clock_out_time) }}"
+                        {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
                     @error('clock_in')<div class="error-message">{{ $message }}</div>@enderror
                     @error('clock_out')<div class="error-message">{{ $message }}</div>@enderror
                 </td>
@@ -59,9 +65,13 @@
                 <tr>
                     <th>休憩{{ $index + 1 }}</th>
                     <td>
-                        <input type="time" name="breaks[{{ $index }}][break_start]" value="{{ $breakStart }}">
+                        <input type="time" name="breaks[{{ $index }}][break_start]"
+                            value="{{ $breakStart }}"
+                            {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
                         〜
-                        <input type="time" name="breaks[{{ $index }}][break_end]" value="{{ $breakEnd }}">
+                        <input type="time" name="breaks[{{ $index }}][break_end]"
+                            value="{{ $breakEnd }}"
+                            {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}>
                         @error("breaks.$index.break_start")<div class="error-message">{{ $message }}</div>@enderror
                         @error("breaks.$index.break_end")<div class="error-message">{{ $message }}</div>@enderror
                     </td>
@@ -71,7 +81,9 @@
             <tr>
                 <th>備考</th>
                 <td>
-                    <textarea name="note" rows="3">{{ old('note', $attendance->note) }}</textarea>
+                    <textarea name="note" rows="3"
+                        {{ $attendance->status === 'waiting_approval' ? 'disabled' : '' }}
+                    >{{ old('note', $attendance->note) }}</textarea>
                     @error('note')<div class="error-message">{{ $message }}</div>@enderror
                 </td>
             </tr>
