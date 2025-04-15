@@ -42,11 +42,12 @@ class AttendanceCorrectionTest extends TestCase
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
-                'break_start' => '16:00',
-                'break_end' => '15:00',
+                'breaks' => [
+                    ['break_start' => '16:00', 'break_end' => '15:00'],
+                ],
                 'note' => '修正',
             ])
-            ->assertSessionHasErrors('break_end'); // break_end にエラーが出ることを確認
+            ->assertSessionHasErrors('breaks.0.break_end'); // break_end にエラーが出ることを確認
     }
 
     /** @test */
@@ -60,11 +61,12 @@ class AttendanceCorrectionTest extends TestCase
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
-                'break_start' => '08:00', // 勤務前に休憩開始（不正）
-                'break_end' => '09:30',
+                'breaks' => [
+                    ['break_start' => '08:00', 'break_end' => '09:30'], // 勤務前に休憩開始（不正）
+                ],
                 'note' => '修正',
             ])
-            ->assertSessionHasErrors('break_start'); // break_start に対してエラーが出ることを確認
+            ->assertSessionHasErrors('breaks.0.break_start'); // break_start に対してエラーが出ることを確認
     }
 
     /** @test */
@@ -95,8 +97,9 @@ class AttendanceCorrectionTest extends TestCase
             ->post("/attendance/{$attendance->id}/correction_request", [
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
-                'break_start' => '12:00',
-                'break_end' => '13:00',
+                'breaks' => [
+                    ['break_start' => '12:00', 'break_end' => '13:00'],
+                ],
                 'note' => '修正内容',
             ])
             ->assertRedirect("/attendance/{$attendance->id}"); // 修正申請後は勤怠詳細画面へリダイレクトされることを確認
