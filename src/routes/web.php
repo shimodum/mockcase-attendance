@@ -45,7 +45,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('message', '認証メールを再送信しました。');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send'); // 過度な連打防止のため、1分間に最大6回までリクエスト可能
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send'); // 過度な連打防止のため、リクエストは1分間に最大6回まで
 
 
 // 勤怠登録関連（一般ユーザー）
